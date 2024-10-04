@@ -6,6 +6,6 @@
 
 | Vishrut Kevadiya | A | 219155290 | vishrutk@my.yorku.ca | 6475737041 | vish8893
 
-| Brian Nguyen | A | 216530461 | brian49@my.yorku.ca |  | BrianNguyen49
+| Brian Nguyen | A | 216530461 | brian49@my.yorku.ca |  | _letho_.
 
 Discord Server invite: https://discord.gg/dEUsNff2be
