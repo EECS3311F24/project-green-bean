@@ -1,5 +1,5 @@
 | **Product Backlog (User Stories)**                                                                                                                                             | **Priority** |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------:|
 | 1. Reviews: As a renter, I want to be able to rate my experience renting the venue so that I can inform others about the quality and suitability of the facility.             |      3       |
 | 2. Facility-type filter: As a renter, I want to filter search results by facility type (such as public/private, schools, community centers, sports complexes, etc.) so that I can find a suitable facility that meets my needs. |      4       |
 | 3. Availability: As a league organizer, I want to check for real-time availability of facilities so that I can secure bookings as soon as possible.                           |      5       |
