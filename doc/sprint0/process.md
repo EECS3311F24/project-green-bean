@@ -1,7 +1,7 @@
 # Process
 
 ## How did you organize the team? Which tools did you use, if any?
-The approach our team, The Green Bean, took when working on Sprint 0 for our project started out very messy, but with time we were able to split the work and organize the project. To do this, we looked at what each team member had a better understanding of and what was expected from the group. To ensure that no one was oblivious to other parts of the project, we had conversations in our weekly team meetings about how each of us approached our work. The tools we used during this phase included Google Docs to keep all our work present, GitHub to push the final versions of our work, Discord for communication, and VS Code for creating and connecting the project skeleton.
+The approach our team, Green Bean, took when working on Sprint 0 for our project started out very messy, but with time we were able to split the work and organize the project. In order to do this, we looked at what each team member had a better understanding of and what was expected from the group. To ensure that no one was oblivious to other parts of the project, we had conversations in our weekly team meetings about how each of us approached our work. The tools we used during this phase included Google Docs to keep all our work present, GitHub to push the final versions of our work, Discord for communication, and VS Code for creating and connecting the project skeleton.
 
 ## How did you make decisions?
 Decisions were made collectively during group meetings. Nothing was final until the group agreed by majority that it was the right direction to take.
