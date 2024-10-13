@@ -13,6 +13,7 @@ The software you need to have installed on your machine to run our code is VScod
 We are using git flow, and we have the following branches: 
 
 * main (or master): This branch contains production-ready code. It always reflects the most stable version of the project.
+
 * develop: This branch contains the latest code that is ready to be merged into main after thorough testing. It's the integration branch for new features.
 * Feature Branches: Feature/feature-name
 * Release Branches: release/release-version
