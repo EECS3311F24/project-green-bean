@@ -3,7 +3,7 @@ const router = express.Router();
 const { doc, setDoc } = require("firebase/firestore");
 const { fireStoredb } = require("../startup/db");
 
-// Signing up a new User
+// Authenticating a user
 router.post("/", async (req, res) => {
   try {
   } catch {}
