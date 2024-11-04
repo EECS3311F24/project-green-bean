@@ -1,0 +1,16 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #4caf50; /* Change this to your desired color */
+  color: white; /* Text color */
+}
+
+.project-name {
+  font-size: 24px; /* Size of the project name */
+}
+
+.user-name {
+  font-size: 18px; /* Size of the user name */
+}
