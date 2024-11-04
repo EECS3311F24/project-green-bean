@@ -154,6 +154,9 @@ router.post("/", async (req, res) => {
     const {
       name,
       location,
+      address,
+      isPublic,
+      description,
       capacity,
       image,
       rate,
@@ -161,16 +164,19 @@ router.post("/", async (req, res) => {
       isBooked = {},
     } = req.body;
 
-    if (!name || !location) {
-      return res
-        .status(400)
-        .json({ message: "Name and location are required" });
+    if (!name || !location || !address || isPublic === undefined) {
+      return res.status(400).json({
+        message: "Name, location, address, and isPublic are required",
+      });
     }
 
     const newArenaRef = doc(collection(fireStoredb, "arenas"));
     await setDoc(newArenaRef, {
       name,
       location,
+      address,
+      isPublic,
+      description,
       capacity: capacity || 0,
       image: image || "",
       rate: rate || 0,

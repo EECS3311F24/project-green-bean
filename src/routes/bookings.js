@@ -72,7 +72,7 @@ router.post("/", async (req, res) => {
       time,
       isRepeat,
       paymentInfo,
-      arenaId, // Include arenaId in the request body
+      arenaId,
     } = req.body;
 
     // Validate required fields
