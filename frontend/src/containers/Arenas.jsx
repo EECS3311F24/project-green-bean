@@ -80,9 +80,12 @@ const Arenas = () => {
                             </InputAdornment>
                         ),
                         endAdornment: (
+                            searchText.length >= 1 ? 
                             <InputAdornment position="end">
                                 <CloseIcon onClick={() => setSearchText("")} sx={{ color: 'gray', fontSize: 22, cursor: 'pointer' }} />
                             </InputAdornment>
+                            : 
+                            null
                         )
                     }}
                     value={searchText} 
