@@ -1,18 +1,20 @@
-The goal of this release is to have a working and updated booking features for the web application and allow users to choose between select venues for now until we have developed the additional features for more diversity in choice in upcoming releases, users should now be able to book and pay for the available venues.
-Epic/Key Features:
-Feature 1: Booking
-allowing the user to book a venue with contact information and payment
+Release Plan Meeting: October 16th, 2024
 
-Feature 2: Displaying Arenas/Venues
-Clients can now see options available for selection/booking
-
-Feature 3: Availability of Venues
-user see updated live time availability for when a venue is already booked or available
-
-Participants:
+Individuals Present in the meeting:
 Prabhjot Dhaliwal
 Orrin Cruz
 Vishrut Kevadiya
 Mark Ngo
+Brian Nguyen
 
-Overall the features we are planning on implementing allow us to now get booking and availbility visable to us and the client
+As a team our release goal for the green bean project is to have a Sports booking application that allows users to have a much easier time booking for big or small teams and managers giving them a better variety of choices with feedback from other users experience at venues.
+
+Some clear release/sprint goals and key epics that need to be included in the release of our application to reach this goal is: 
+
+Filtering: the client being able to navigate the application and sort through the choices of venues so it sorts based on what the client is looking for.
+
+Reviews/Feedback: The client can leave feedback on venues so that others are able to then based on that information make decisions; instead of being surprised by what they book.
+
+Booking: The client is able to book and able to make and are provided information based on the booking information provided.
+
+There are many other smaller goals that need to be met for the release of the application, the team wanted to have a bigger focus on the given epics as that is what the major focus and motivation for our project.
