@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import { fetchArenas } from '../fetch/arenas';
+import TextField from '@mui/material/TextField';
+import SearchIcon from '@mui/icons-material/Search';
+import Box from '@mui/material/Box';
+import InputAdornment from '@mui/material/InputAdornment';
 import {
     Card,
     CardMedia,
@@ -14,8 +18,10 @@ import {
 
 const Arenas = () => {
     const [arenas, setArenas] = useState([]);
+    const [filteredArenas, setFilteredArenas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchText, setSearchText] = useState("");
     const navigate = useNavigate(); // Initialize navigate
 
     useEffect(() => {
@@ -23,15 +29,26 @@ const Arenas = () => {
             try {
                 const data = await fetchArenas();
                 setArenas(data);
+                setFilteredArenas(data);
             } catch (error) {
                 setError(error.message);
             } finally {
                 setLoading(false);
             }
         };
-
         getArenas();
     }, []);
+
+    useEffect(() =>{
+        setFilteredArenas(arenas);
+        setFilteredArenas(prevArenas => {
+            const arenas = prevArenas.filter((a) => 
+                a.location.toLowerCase().startsWith(searchText.toLowerCase()) || a.sport.toLowerCase().startsWith(searchText.toLowerCase())
+                );
+                
+            return arenas;
+        });
+    }, [searchText]);
 
     if (loading) return <CircularProgress />;
     if (error) return <Alert severity="error">Error fetching arenas: {error}</Alert>;
@@ -48,20 +65,55 @@ const Arenas = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <Typography variant="h4" component="h1" gutterBottom>
-                Arenas
-            </Typography>
+             <Box display="flex" alignItems="center" gap={2}>
+                <Typography variant="h4" component="h1" gutterBottom>
+                    Arenas
+                </Typography>
+                <TextField
+                    variant="outlined"
+                    placeholder="Search by Location or Sport..."
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon sx={{ color: 'gray', fontSize: 22 }} />
+                            </InputAdornment>
+                        ),
+                    }}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    sx={{
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: '50px',
+                    },
+                    width: '500px', 
+                    position: 'relative',
+                    marginBottom: '20px',
+                    }}
+                />
+            </Box>
             <Grid container spacing={3}>
-                {arenas.map((arena) => (
+                {/* Display message if no arenas are found */}
+                {filteredArenas.length === 0 ? (
+                    <Typography variant="body1" color="textSecondary" sx={{ position: 'relative', margin: '20px', fontSize: '20px'}}>
+                        No arenas found for '{searchText}'
+                    </Typography>
+                ) : (
+                    // Display message if some but not all arenas are shown
+                    filteredArenas.length !== arenas.length && (
+                        <Typography variant="body1" color="textSecondary" sx={{display: 'block', width: '100%',  margin: '20px', marginBottom: '0px', fontSize: '20px'}}>
+                             {filteredArenas.length} arena{filteredArenas.length > 1 ? 's' : ''} found for '{searchText}'
+                        </Typography>
+                    )
+                )}
+                {filteredArenas.map((arena) => (
                     <Grid item xs={12} sm={6} md={4} key={arena.id}>
                         <Card>
                             {arena.image && (
-                                <CardMedia
-                                    component="img"
-                                    height="240"
-                                    image={arena.image}
-                                    alt={arena.name}
-                                />
+                            <CardMedia
+                                component="img"
+                                height="240"
+                                image={arena.image}
+                                alt={arena.name}
+                            />
                             )}
                             <CardContent>
                                 <Typography variant="h5" component="div">
