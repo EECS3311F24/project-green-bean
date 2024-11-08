@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
+import CloseIcon from '@mui/icons-material/Close';
 import {
     Card,
     CardMedia,
@@ -78,7 +79,13 @@ const Arenas = () => {
                                 <SearchIcon sx={{ color: 'gray', fontSize: 22 }} />
                             </InputAdornment>
                         ),
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <CloseIcon onClick={() => setSearchText("")} sx={{ color: 'gray', fontSize: 22, cursor: 'pointer' }} />
+                            </InputAdornment>
+                        )
                     }}
+                    value={searchText} 
                     onChange={(e) => setSearchText(e.target.value)}
                     sx={{
                     '& .MuiOutlinedInput-root': {
