@@ -163,6 +163,7 @@ router.post("/", async (req, res) => {
       rate,
       rating,
       isBooked = {},
+      feedback = {},
     } = req.body;
 
     if (!name || !location || !address || isPublic === undefined) {
@@ -184,6 +185,7 @@ router.post("/", async (req, res) => {
       rate: rate || 0,
       rating: rating || 0,
       isBooked,
+      feedback,
     });
 
     res

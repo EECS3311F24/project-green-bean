@@ -1,0 +1,88 @@
+const express = require("express");
+const router = express.Router();
+const {
+  doc,
+  setDoc,
+  collection,
+  getDocs,
+  getDoc,
+  query,
+  where,
+} = require("firebase/firestore");
+const { fireStoredb } = require("../startup/db");
+
+router.get("/", async (req, res) => {
+    try{
+
+    } 
+    catch(error){
+
+    }
+});
+
+//add comment and rating for the arena
+router.post("/", async (req, res) => {
+    try{
+        const {
+            firstName,
+            lastName, 
+            comment,
+            rating,
+            arenaId 
+        } = req.body;
+    
+        // Validate required fields
+        if (
+            !firstName ||
+            !lastName ||
+            !comment ||
+            !rating ||
+            !arenaId
+        ) {
+            return res
+            .status(400)
+            .json({ message: "Please provide all required fields" });
+        }
+
+        // Fetch the specified arena to check availability
+        const arenaRef = doc(fireStoredb, "arenas", arenaId);
+        const arenaSnap = await getDoc(arenaRef);
+
+        // Check if the arena exists and is available
+        if (!arenaSnap.exists()) {
+        return res
+            .status(400)
+            .json({ message: "The specified arena does not exist" });
+        }
+
+        // Create Feedback in Firestore
+    const newFeedbackRef = doc(collection(fireStoredb, "feedback"));
+    await setDoc(newFeedbackRef, {
+        firstName,
+        lastName, 
+        comment,
+        rating: rating || 0,
+        arenaId : arenaId, 
+    });
+
+    // Update the arena with the feedback information
+    await setDoc(
+        arenaRef,
+        {
+          feedback: {
+            feedbackId: newBookingRef.id,
+          },
+        },
+        { merge: true }
+      ); // Use merge to keep existing arena data
+      res
+      .status(201)
+      .json({ message: "Feedback created successfully", id: newFeedbackRef.id });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to create booking", error: error.message });
+  }
+});
+
+module.exports = router;
