@@ -11,13 +11,45 @@ const {
 } = require("firebase/firestore");
 const { fireStoredb } = require("../startup/db");
 
+//Fetch feedback based on arena id
 router.get("/", async (req, res) => {
-    try{
+    try {
+        const feedbackRef = collection(fireStoredb, "feedback");
+        const snapshot = await getDocs(feedbackRef);
+    
+        if (snapshot.empty) {
+          return res.status(404).json({ message: "No feedback found" });
+        }
+    
+        const comments = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(comments);
+      } catch (error) {
+        res.status(500).json({
+          message: "Failed to fetch list of feedback",
+          error: error.message,
+        });
+      }
+});
 
-    } 
-    catch(error){
-
-    }
+router.get("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const feedbackRef = collection(fireStoredb, "feedback");
+        const q = query(feedbackRef, where("arenaId", "==", id));
+        const snapshot = await getDocs(q);
+    
+        if (snapshot.empty) {
+          return res.status(404).json({ message: "No feedback found in this arena" });
+        }
+    
+        const comments = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(comments);
+      } catch (error) {
+        res.status(500).json({
+          message: "Failed to fetch feedback by arenaId",
+          error: error.message,
+        });
+      }
 });
 
 //add comment and rating for the arena
@@ -70,7 +102,7 @@ router.post("/", async (req, res) => {
         arenaRef,
         {
           feedback: {
-            feedbackId: newBookingRef.id,
+            feedbackId: newFeedbackRef.id,
           },
         },
         { merge: true }
@@ -81,7 +113,7 @@ router.post("/", async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to create booking", error: error.message });
+      .json({ message: "Failed to create feedback", error: error.message });
   }
 });
 
