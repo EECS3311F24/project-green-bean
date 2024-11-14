@@ -8,17 +8,21 @@ import React, { useState } from "react";
 import Header from "./containers/Header";
 import Login from "./containers/Login";
 import BookingPage from "./containers/BookingPage";
+import GoogleAuthCallback from "./containers/GoogleAuthCallback";
 import ConfirmedBookingPage from "./containers/ConfirmedBookingPage";
 import Arenas from "./containers/Arenas";
+import { useAuth } from "./state/AuthContext";
 
 function App() {
+  const { userData } = useAuth();
   const [userName, setUserName] = useState("");
   return (
     <Router>
-      <Header userName={userName} />
+      <Header userName={userData?.name || userName} setUserName={setUserName} />
       <Routes>
         <Route path="/" element={<Login setUserName={setUserName} />} />
         <Route path="/arenas" element={<Arenas />} />
+        <Route path="/api/auth/callback" element={<GoogleAuthCallback />} />
         <Route path="/booking/:id" element={<BookingPage />} />
         <Route path="/confirmed" element={<ConfirmedBookingPage />} />
         <Route path="*" element={<Navigate to="/" />} />{" "}
