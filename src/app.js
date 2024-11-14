@@ -2,7 +2,7 @@ var createError = require("http-errors");
 require("dotenv").config();
 var express = require("express");
 var path = require("path");
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8000;
 
 var app = express();
 
@@ -21,7 +21,7 @@ app.use(function (req, res, next) {
   next(createError(404));
 });
 
-const server = app.listen(PORT, () =>
+const server = app.listen(PORT,  () =>
   console.log(`Listening on port ${PORT}... `)
 );
 
