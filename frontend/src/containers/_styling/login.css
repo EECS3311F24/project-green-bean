@@ -1,13 +1,13 @@
-/* Add this to the top of your CSS file */
 *,
 *::before,
 *::after {
-  box-sizing: border-box; /* Apply border-box model to all elements */
+  box-sizing: border-box;
 }
 
 .login-container {
   width: 500px;
   margin: 50px auto;
+  margin-bottom: 20px;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -30,7 +30,7 @@
 }
 
 .form-group input {
-  width: 100%; /* This will now account for padding */
+  width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -48,4 +48,59 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+.google-signin-container {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.google-signin-btn {
+  width: 500px;
+  padding: 8px;
+  background-color: #4285f4;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+}
+
+.google-signin-btn:hover {
+  background-color: #357ae8;
+}
+
+.google-icon {
+  width: 20px;
+  margin-right: 10px;
+}
+
+.horizontal-bar {
+  display: flex;
+  /* width: 500px; */
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.horizontal-bar::before,
+.horizontal-bar::after {
+  content: "";
+  flex-grow: 1;
+  height: 1px;
+  background-color: #ccc;
+}
+
+.horizontal-bar span {
+  padding: 0 10px;
+  color: #333;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: #fff;
+  z-index: 1;
 }
