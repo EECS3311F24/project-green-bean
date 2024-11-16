@@ -11,7 +11,7 @@ const {
 } = require("firebase/firestore");
 const { fireStoredb } = require("../startup/db");
 
-//Fetch feedback based on arena id
+//Fetch all feedback
 router.get("/", async (req, res) => {
     try {
         const feedbackRef = collection(fireStoredb, "feedback");
@@ -31,6 +31,7 @@ router.get("/", async (req, res) => {
       }
 });
 
+//Fetch feedback based on arena id
 router.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;
