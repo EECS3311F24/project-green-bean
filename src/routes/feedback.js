@@ -57,8 +57,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
     try{
         const {
-            firstName,
-            lastName, 
+            username,
             comment,
             rating,
             arenaId 
@@ -66,8 +65,7 @@ router.post("/", async (req, res) => {
     
         // Validate required fields
         if (
-            !firstName ||
-            !lastName ||
+            !username ||
             !comment ||
             !rating ||
             !arenaId
@@ -91,25 +89,13 @@ router.post("/", async (req, res) => {
         // Create Feedback in Firestore
     const newFeedbackRef = doc(collection(fireStoredb, "feedback"));
     await setDoc(newFeedbackRef, {
-        firstName,
-        lastName, 
+        username,
         comment,
         rating: rating || 0,
         arenaId : arenaId, 
     });
 
-    // Update the arena with the feedback information
-    await setDoc(
-        arenaRef,
-        {
-          feedback: {
-            feedbackId: newFeedbackRef.id,
-          },
-        },
-        { merge: true }
-      ); // Use merge to keep existing arena data
-      res
-      .status(201)
+      res.status(201)
       .json({ message: "Feedback created successfully", id: newFeedbackRef.id });
   } catch (error) {
     res

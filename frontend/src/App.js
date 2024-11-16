@@ -10,6 +10,7 @@ import Login from "./containers/Login";
 import BookingPage from "./containers/BookingPage";
 import ConfirmedBookingPage from "./containers/ConfirmedBookingPage";
 import Arenas from "./containers/Arenas";
+import TextCommentpage from "./containers/TextComment"
 
 function App() {
   const [userName, setUserName] = useState("");
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<Login setUserName={setUserName} />} />
         <Route path="/arenas" element={<Arenas />} />
         <Route path="/booking/:id" element={<BookingPage />} />
+        <Route path="/testing/:id" element={<TextCommentpage userName={userName} />} />
         <Route path="/confirmed" element={<ConfirmedBookingPage />} />
         <Route path="*" element={<Navigate to="/" />} />{" "}
       </Routes>
