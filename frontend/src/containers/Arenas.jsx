@@ -28,8 +28,8 @@ const Arenas = () => {
     const navigate = useNavigate(); 
 
     useEffect(() => {
-        console.log(userData);
-        if (isAuthenticated) {
+        console.log(process.env.REACT_APP_SERVICE_ID);
+        // if (isAuthenticated) {
             const getArenas = async () => {
                 try {
                     const data = await fetchArenas();
@@ -42,10 +42,10 @@ const Arenas = () => {
                 }
             };
             getArenas();
-        } 
-        else {
-            navigate('/');
-        }
+        // } 
+        // else {
+        //     navigate('/');
+        // }
         
     }, []);
 
