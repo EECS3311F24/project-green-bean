@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import "./_styling/login.css";
 import { useNavigate } from 'react-router-dom';
 import {useAuth} from '../state/AuthContext';
+import GoogleIcon from '@mui/icons-material/Google';
+
 
 const Login = ({setUserName}) => {
     const [firstName, setFirstName] = useState('');
@@ -71,11 +73,9 @@ const Login = ({setUserName}) => {
         </div>
         <div className="google-signin-container">
         <button className="google-signin-btn" onClick={() => handleGoogleSignIn()}>
-            <img
-            src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Google_2015_logo.svg"
-            alt="Google"
-            className="google-icon"
-            />
+       
+        <GoogleIcon style={{position: 'relative', marginRight: '10px'}}/>
+      
             Sign in with Google
         </button>
         </div>

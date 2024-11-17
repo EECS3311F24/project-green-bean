@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { fetchArenas } from '../fetch/arenas';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
-import {useAuth} from '../state/AuthContext';
+import { useAuth } from '../state/AuthContext';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Card,
@@ -17,6 +17,9 @@ import {
     Alert,
     Button
 } from '@mui/material';
+import FilteringComponent from './Filters';
+import { useDispatch, useSelector } from 'react-redux';
+import { setInitialdata } from '../store/FilterSlice';
 
 const Arenas = () => {
     const [arenas, setArenas] = useState([]);
@@ -24,53 +27,131 @@ const Arenas = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchText, setSearchText] = useState("");
-    const {isAuthenticated, userData } = useAuth();
-    const navigate = useNavigate(); 
+    const { isAuthenticated, userData } = useAuth();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const filters = useSelector((state) => state.filter?.data);
+    const initialdata = useSelector((state) => state.filter?.initialdata);
+    const filterapplied = useSelector((state) => state.filter?.applied);
+
+    console.log(filters, "filters");
 
     useEffect(() => {
         console.log(process.env.REACT_APP_SERVICE_ID);
-        // if (isAuthenticated) {
-            const getArenas = async () => {
-                try {
-                    const data = await fetchArenas();
-                    setArenas(data);
-                    setFilteredArenas(data);
-                } catch (error) {
-                    setError(error.message);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            getArenas();
-        // } 
-        // else {
-        //     navigate('/');
-        // }
-        
-    }, []);
+        const getArenas = async () => {
+            try {
+                const data = await fetchArenas();
+                setArenas(data);
+                setFilteredArenas(data);
+                dispatch(setInitialdata(data));
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    useEffect(() =>{
+        if (isAuthenticated) {
+            getArenas();
+        } else {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate, dispatch]);
+
+    console.log(userData);
+
+    useEffect(() => {
         setFilteredArenas(arenas);
-        setFilteredArenas(prevArenas => {
-            const arenas = prevArenas.filter((a) => 
-                a.location.toLowerCase().startsWith(searchText.toLowerCase()) || a.sport.toLowerCase().startsWith(searchText.toLowerCase())
-                );
-                
-            return arenas;
+        setFilteredArenas((prevArenas) => {
+            return prevArenas.filter((a) =>
+                a.location.toLowerCase().startsWith(searchText.toLowerCase()) ||
+                a.sport.toLowerCase().startsWith(searchText.toLowerCase())
+            );
         });
-    }, [searchText]);
+    }, [searchText, arenas]);
+
+// Public/Private Filter useEffect
+useEffect(() => {
+    console.log("Public/Private filter applied:", filters?.type);
+    if (filters?.type) {
+        setFilteredArenas((prevArenas) => {
+            return prevArenas.filter((arena) => {
+                return (filters.type.toLowerCase() === 'yes' && arena?.isPublic === true) ||
+                       (filters.type.toLowerCase() === 'no' && arena?.isPublic === false);
+            });
+        });
+    } else {
+        setFilteredArenas(initialdata);  // Reset if no type filter
+    }
+}, [filters?.type, filterapplied]);  // Trigger when type (public/private) filter changes
+
+    useEffect(() => {
+        console.log("Location filter applied:", filters?.location);
+        if (filters?.location) {
+            setFilteredArenas((prevArenas) => {
+                return prevArenas.filter((arena) => {
+                    return arena?.location?.toLowerCase().includes(filters.location.toLowerCase());
+                });
+            });
+        } else {
+            setFilteredArenas(initialdata);  // Reset if no location filter
+        }
+    }, [filters, arenas]);
+
+    useEffect(() => {
+        console.log("Address filter applied:", filters?.address);
+        if (filters?.address) {
+            setFilteredArenas((prevArenas) => {
+                return prevArenas.filter((arena) => {
+                    return arena?.address?.toLowerCase().includes(filters.address.toLowerCase());
+                });
+            });
+        } else {
+            setFilteredArenas(initialdata);  // Reset if no address filter
+        }
+    }, [filters?.address, filterapplied, initialdata]);
+
+    // Public/Private Filter useEffect
+    useEffect(() => {
+        console.log("Public/Private filter applied:", filters?.type);
+        if (filters?.type) {
+            setFilteredArenas((prevArenas) => {
+                return prevArenas.filter((arena) => {
+                    return (filters.type.toLowerCase() === 'yes' && arena?.isPublic === true) ||
+                       (filters.type.toLowerCase() === 'no' && arena?.isPublic === false);
+            });
+        });
+    } else {
+        setFilteredArenas(initialdata);  // Reset if no type filter
+    }
+    }, [filters?.type, filterapplied]);  // Trigger when type (public/private) filter changes
+
+    useEffect(() => {
+        console.log("Rate filter applied:", filters?.rate);
+        if (filters?.rate) {
+            setFilteredArenas((prevArenas) => {
+                return prevArenas.filter((arena) => {
+                    return arena?.rate >= filters.rate[0] && arena?.rate <= filters?.rate[1];
+                });
+            });
+        } else {
+            setFilteredArenas(initialdata);  // Reset if no rate filter
+        }
+    }, [filters?.rate, filterapplied, initialdata]);
 
     if (loading) return <CircularProgress />;
     if (error) return <Alert severity="error">Error fetching arenas: {error}</Alert>;
 
     const handleBook = (arena) => {
         console.log(arena);
-        navigate(`/booking/${arena.id}`, { state: { 
-            description: arena.description, 
-            image: arena.image,
-            name: arena.name,
-            id: arena.id
-        }}); // Pass arena details to BookingPage
+        navigate(`/booking/${arena.id}`, {
+            state: {
+                description: arena.description,
+                image: arena.image,
+                name: arena.name,
+                id: arena.id
+            }
+        }); // Pass arena details to BookingPage
     };
 
     const handleComment = (arena) => {
@@ -80,10 +161,9 @@ const Arenas = () => {
             id: arena.id
         }}); // Pass arena details to TextComment test page
     };
-
     return (
         <div style={{ padding: '20px' }}>
-             <Box display="flex" alignItems="center" gap={2}>
+            <Box display="flex" alignItems="center" gap={2}>
                 <Typography variant="h4" component="h1" gutterBottom>
                     Arenas
                 </Typography>
@@ -97,37 +177,40 @@ const Arenas = () => {
                             </InputAdornment>
                         ),
                         endAdornment: (
-                            searchText.length >= 1 ? 
-                            <InputAdornment position="end">
-                                <CloseIcon onClick={() => setSearchText("")} sx={{ color: 'gray', fontSize: 22, cursor: 'pointer' }} />
-                            </InputAdornment>
-                            : 
-                            null
+                            searchText.length >= 1 ?
+                                <InputAdornment position="end">
+                                    <CloseIcon onClick={() => setSearchText("")} sx={{ color: 'gray', fontSize: 22, cursor: 'pointer' }} />
+                                </InputAdornment>
+                                :
+                                null
                         )
                     }}
-                    value={searchText} 
+                    value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                     sx={{
-                    '& .MuiOutlinedInput-root': {
-                        borderRadius: '50px',
-                    },
-                    width: '500px', 
-                    position: 'relative',
-                    marginBottom: '20px',
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: '50px',
+                        },
+                        width: '500px',
+                        position: 'relative',
+                        marginBottom: '20px',
                     }}
                 />
             </Box>
+            <div className='my-2 max-w-md'>
+                <FilteringComponent />
+            </div>
             <Grid container spacing={3}>
                 {/* Display message if no arenas are found */}
                 {filteredArenas.length === 0 ? (
-                    <Typography variant="body1" color="textSecondary" sx={{ position: 'relative', margin: '20px', fontSize: '20px'}}>
+                    <Typography variant="body1" color="textSecondary" sx={{ position: 'relative', margin: '20px', fontSize: '20px' }}>
                         No arenas found for '{searchText}'
                     </Typography>
                 ) : (
                     // Display message if some but not all arenas are shown
                     filteredArenas.length !== arenas.length && (
-                        <Typography variant="body1" color="textSecondary" sx={{display: 'block', width: '100%',  margin: '20px', marginBottom: '0px', fontSize: '20px'}}>
-                             {filteredArenas.length} arena{filteredArenas.length > 1 ? 's' : ''} found for '{searchText}'
+                        <Typography variant="body1" color="textSecondary" sx={{ display: 'block', width: '100%', margin: '20px', marginBottom: '0px', fontSize: '20px' }}>
+                            {filteredArenas.length} arena{filteredArenas.length > 1 ? 's' : ''} found for '{searchText}'
                         </Typography>
                     )
                 )}
@@ -135,12 +218,12 @@ const Arenas = () => {
                     <Grid item xs={12} sm={6} md={4} key={arena.id}>
                         <Card>
                             {arena.image && (
-                            <CardMedia
-                                component="img"
-                                height="240"
-                                image={arena.image}
-                                alt={arena.name}
-                            />
+                                <CardMedia
+                                    component="img"
+                                    height="240"
+                                    image={arena.image}
+                                    alt={arena.name}
+                                />
                             )}
                             <CardContent>
                                 <Typography variant="h5" component="div">
@@ -164,11 +247,11 @@ const Arenas = () => {
                                 <Typography variant="body2" color="text.secondary">
                                     Rating: {arena.rating.toFixed(1)} ⭐
                                 </Typography>
-                                <Button 
-                                    variant="contained" 
-                                    color="primary" 
-                                    style={{ marginTop: '10px' }}
-                                    onClick={() => handleBook(arena)} 
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    style={{ marginTop: '10px' , zIndex:'5px'}}
+                                    onClick={() => handleBook(arena)}
                                 >
                                     Book
                                 </Button>
