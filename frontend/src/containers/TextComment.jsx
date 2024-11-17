@@ -3,16 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchAllFeedback, fetchFeedback, postFeedback } from '../fetch/feedback';
 import {
     Typography,
-    Card,
-    CardMedia,
-    CardContent,
     TextField,
     Button,
-    FormControlLabel,
-    Checkbox,
     Grid,
     Box,
 } from '@mui/material';
+import io from "socket.io-client";
+const socket = io("http://localhost:3000");
 
 const TestCommentPage = ({userName}) => {
 
@@ -43,27 +40,36 @@ const TestCommentPage = ({userName}) => {
                 setLoading(false);
             }
         }
-
         getFeedback();
+
+        socket.on("new-feedback", (newFeedback) => {
+            setFeedback((prevFeedback) => [...prevFeedback, newFeedback]);
+        });
+
+        return () => socket.off("new-feedback");
     }, []);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
             setFormData({
                 ...formData,
-                [name]: type === "checkbox" ? checked : value,
+                [name]: type === "number" ? Number(value) : value,
             });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Form submitted with data:", formData);
+
+        console.log("userName", userName);
         e.preventDefault();
         const feedbackData = {
             ...formData,
             arenaId: id, // Add arena ID to feedback data
             username: userName
         };
+
+        console.log("Form submitted with data:", feedbackData);
 
         try {
             const response = await postFeedback(feedbackData); // Call the API function

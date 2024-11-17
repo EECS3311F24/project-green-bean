@@ -94,7 +94,9 @@ router.post("/", async (req, res) => {
         rating: rating || 0,
         arenaId : arenaId, 
     });
-
+      // Emit a Socket.IO event to notify clients of new feedback
+      const io = req.app.get("socketio");
+      io.emit("newFeedback", { id: newFeedbackRef.id});
       res.status(201)
       .json({ message: "Feedback created successfully", id: newFeedbackRef.id });
   } catch (error) {
