@@ -11,6 +11,7 @@ import BookingPage from "./containers/BookingPage";
 import GoogleAuthCallback from "./containers/GoogleAuthCallback";
 import ConfirmedBookingPage from "./containers/ConfirmedBookingPage";
 import Arenas from "./containers/Arenas";
+import TextCommentpage from "./containers/TextComment"
 import { useAuth } from "./state/AuthContext";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login setUserName={setUserName} />} />
         <Route path="/arenas" element={<Arenas />} />
+        <Route path="/testing/:id" element={<TextCommentpage userName={userName} />} />
         <Route path="/api/auth/callback" element={<GoogleAuthCallback />} />
         <Route path="/booking/:id" element={<BookingPage userName={userData?.name || userName} />} />
         <Route path="/confirmed" element={<ConfirmedBookingPage />} />

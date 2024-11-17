@@ -153,6 +153,14 @@ useEffect(() => {
             }
         }); // Pass arena details to BookingPage
     };
+
+    const handleComment = (arena) => {
+        console.log(arena);
+        navigate(`/testing/${arena.id}`, { state: { 
+            name: arena.name,
+            id: arena.id
+        }}); // Pass arena details to BookingPage
+    };
     return (
         <div style={{ padding: '20px' }}>
             <Box display="flex" alignItems="center" gap={2}>
@@ -246,6 +254,14 @@ useEffect(() => {
                                     onClick={() => handleBook(arena)}
                                 >
                                     Book
+                                </Button>
+                                <Button 
+                                    variant="contained" 
+                                    color="primary" 
+                                    style={{ marginTop: '10px' }}
+                                    onClick={() => handleComment(arena)} 
+                                >
+                                    check comments
                                 </Button>
                             </CardContent>
                         </Card>
