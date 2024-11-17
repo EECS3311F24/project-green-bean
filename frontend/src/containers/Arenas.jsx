@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
+import { useAuth } from '../state/AuthContext';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Card,
@@ -26,14 +27,14 @@ const Arenas = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchText, setSearchText] = useState("");
-    const navigate = useNavigate(); // Initialize navigate
+    const { isAuthenticated, userData } = useAuth();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const filters = useSelector((state) => state.filter?.data);
+    const initialdata = useSelector((state) => state.filter?.initialdata);
+    const filterapplied = useSelector((state) => state.filter?.applied);
 
-    const dispatch = useDispatch()
-    const filters = useSelector((state) => state.filter?.data)
-    const initialdata = useSelector((state) => state.filter?.initialdata)
-    const filterapplied = useSelector((state)=> state.filter?.applied)
-
-    console.log(filters, "filters")
+    console.log(filters, "filters");
 
     useEffect(() => {
         console.log(process.env.REACT_APP_SERVICE_ID);
@@ -42,77 +43,32 @@ const Arenas = () => {
                 const data = await fetchArenas();
                 setArenas(data);
                 setFilteredArenas(data);
-                dispatch(setInitialdata(data))
+                dispatch(setInitialdata(data));
             } catch (error) {
                 setError(error.message);
             } finally {
                 setLoading(false);
             }
         };
-        getArenas();
-    }, []);
+
+        if (isAuthenticated) {
+            getArenas();
+        } else {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate, dispatch]);
+
+    console.log(userData);
 
     useEffect(() => {
         setFilteredArenas(arenas);
-        setFilteredArenas(prevArenas => {
-            const arenas = prevArenas.filter((a) =>
-                a.location.toLowerCase().startsWith(searchText.toLowerCase()) || a.sport.toLowerCase().startsWith(searchText.toLowerCase())
-            );
-
-            return arenas;
-        });
-    }, [searchText]);
-
-    useEffect(() => {
-        console.log("Filters object: ", filters);
-        console.log("Initial arenas list: ", arenas);
-    
-        if (Object.values(filters).length > 0) {
-            const filtered = arenas.filter((arena) => {
-                // Public/Private Filter
-                const matchesType = filters?.type
-                    ? (filters?.type.toLowerCase() === 'yes' && arena?.isPublic === true) ||
-                      (filters?.type.toLowerCase() === 'no' && arena?.isPublic === false)
-                    : true;
-    
-                return matchesType;
-            });
-    
-            console.log("Filtered arenas: ", filtered);
-            setFilteredArenas(filtered);
-        } else {
-            setFilteredArenas(initialdata);  // Reset if no filters
-        }
-    }, [filters, arenas]);  // Trigger when filters or arenas change
-
-    // Location Filter useEffect
-    useEffect(() => {
-        console.log("Location filter applied:", filters?.location);
-        if (filters?.location) {
-            setFilteredArenas((prevArenas) => {
-                return prevArenas.filter((arena) => {
-                    return arena?.location?.toLowerCase().includes(filters.location.toLowerCase());
-                });
-            });
-        } else {
-            setFilteredArenas(initialdata);  // Reset if no location filter
-        }
-    }, [filters?.location, filterapplied]);  // Trigger when location filter changes
-    
-
-// Address Filter useEffect
-useEffect(() => {
-    console.log("Address filter applied:", filters?.address);
-    if (filters?.address) {
         setFilteredArenas((prevArenas) => {
-            return prevArenas.filter((arena) => {
-                return arena?.address?.toLowerCase().includes(filters.address.toLowerCase());
-            });
+            return prevArenas.filter((a) =>
+                a.location.toLowerCase().startsWith(searchText.toLowerCase()) ||
+                a.sport.toLowerCase().startsWith(searchText.toLowerCase())
+            );
         });
-    } else {
-        setFilteredArenas(initialdata);  // Reset if no address filter
-    }
-}, [filters?.address, filterapplied]);  // Trigger when address filter changes
+    }, [searchText, arenas]);
 
 // Public/Private Filter useEffect
 useEffect(() => {
@@ -129,19 +85,59 @@ useEffect(() => {
     }
 }, [filters?.type, filterapplied]);  // Trigger when type (public/private) filter changes
 
-// Rate Filter useEffect
-useEffect(() => {
-    console.log("Rate filter applied:", filters?.rate);
-    if (filters?.rate) {
-        setFilteredArenas((prevArenas) => {
-            return prevArenas.filter((arena) => {
-                return arena?.rate >= filters.rate[0] && arena?.rate <= filters?.rate[1];
+    useEffect(() => {
+        console.log("Location filter applied:", filters?.location);
+        if (filters?.location) {
+            setFilteredArenas((prevArenas) => {
+                return prevArenas.filter((arena) => {
+                    return arena?.location?.toLowerCase().includes(filters.location.toLowerCase());
+                });
+            });
+        } else {
+            setFilteredArenas(initialdata);  // Reset if no location filter
+        }
+    }, [filters, arenas]);
+
+    useEffect(() => {
+        console.log("Address filter applied:", filters?.address);
+        if (filters?.address) {
+            setFilteredArenas((prevArenas) => {
+                return prevArenas.filter((arena) => {
+                    return arena?.address?.toLowerCase().includes(filters.address.toLowerCase());
+                });
+            });
+        } else {
+            setFilteredArenas(initialdata);  // Reset if no address filter
+        }
+    }, [filters?.address, filterapplied, initialdata]);
+
+    // Public/Private Filter useEffect
+    useEffect(() => {
+        console.log("Public/Private filter applied:", filters?.type);
+        if (filters?.type) {
+            setFilteredArenas((prevArenas) => {
+                return prevArenas.filter((arena) => {
+                    return (filters.type.toLowerCase() === 'yes' && arena?.isPublic === true) ||
+                       (filters.type.toLowerCase() === 'no' && arena?.isPublic === false);
             });
         });
     } else {
-        setFilteredArenas(initialdata);  // Reset if no rate filter
+        setFilteredArenas(initialdata);  // Reset if no type filter
     }
-}, [filters?.rate, filterapplied]);  // Trigger when rate filter changes
+    }, [filters?.type, filterapplied]);  // Trigger when type (public/private) filter changes
+
+    useEffect(() => {
+        console.log("Rate filter applied:", filters?.rate);
+        if (filters?.rate) {
+            setFilteredArenas((prevArenas) => {
+                return prevArenas.filter((arena) => {
+                    return arena?.rate >= filters.rate[0] && arena?.rate <= filters?.rate[1];
+                });
+            });
+        } else {
+            setFilteredArenas(initialdata);  // Reset if no rate filter
+        }
+    }, [filters?.rate, filterapplied, initialdata]);
 
     if (loading) return <CircularProgress />;
     if (error) return <Alert severity="error">Error fetching arenas: {error}</Alert>;
@@ -157,7 +153,6 @@ useEffect(() => {
             }
         }); // Pass arena details to BookingPage
     };
-
     return (
         <div style={{ padding: '20px' }}>
             <Box display="flex" alignItems="center" gap={2}>
