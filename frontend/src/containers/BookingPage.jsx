@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
     Typography,
@@ -16,6 +16,7 @@ import {
     Box,
 } from '@mui/material';
 import { postBooking } from '../fetch/bookings';
+import {fetchFeedback, postFeedback } from '../fetch/feedback';
 
 const BookingPage = ({ userName }) => {
     const location = useLocation(); // Get the location object
@@ -41,6 +42,23 @@ const BookingPage = ({ userName }) => {
     const [comments,setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [rating, setRating] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [feedback, setFeedback] = useState([]);
+
+    useEffect(() =>{
+        const getFeedback = async () =>{
+            try{
+                const data = await fetchFeedback(id);
+                setFeedback(data);
+            } catch(error){
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+        getFeedback();
+    }, []);
     
     // Check if the state exists
     if (!state) {
@@ -83,7 +101,8 @@ const BookingPage = ({ userName }) => {
             const response = await postBooking(bookingData); // Call the API function
             console.log('Booking data submitted:', response);
             // Redirect to the ConfirmedBookingPage with booking details
-            navigate('/confirmed', { state: { bookingId: response.id, ...bookingData } });
+            window.location.reload(false);
+            // navigate('/confirmed', { state: { bookingId: response.id, ...bookingData } });
         } catch (error) {
             console.error('Error submitting booking:', error);
             // Optionally handle the error (e.g., show a message to the user)
@@ -98,13 +117,32 @@ const BookingPage = ({ userName }) => {
         setRating(parseInt(e.target.value, 10));
     };
 
-    const handleCommentSubmit = (e) => {
+    const handleCommentSubmit = async (e) => {
         e.preventDefault();
-        if(newComment.trim() && userName){
-            setComments([...comments,{ text: newComment, rating, userName }]);
-            setNewComment('');
-            setRating(0);
+        console.log("userName", userName);
+        const feedbackData = {
+            comment: newComment,
+            rating: rating,
+            arenaId: id, // Add arena ID to feedback data
+            username: userName
+        };
+        console.log("Form submitted with data:", feedbackData);
+        navigate(0, { state: { 
+            description: description, 
+            image: image,
+            name: name,
+            id: id
+        }}); // Pass arena details to BookingPage
+
+        try {
+            const response = await postFeedback(feedbackData); // Call the API function
+            console.log('Feedback submitted:', response);
+            
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            // Optionally handle the error (e.g., show a message to the user)
         }
+
     };
 
     return (
@@ -297,7 +335,7 @@ const BookingPage = ({ userName }) => {
                     Submit Comment
                 </Button>
                 </form>  
-                <Box mt={8}>
+                {/* <Box mt={8}>
                     {comments.length > 0 ? (
                         comments.map((comment, index) => (
                         <Box key={index} style={{marginBottom: '10px'}}>
@@ -309,6 +347,25 @@ const BookingPage = ({ userName }) => {
                             </Typography>
                         <Typography variant="body2" color="textSecondary">
                             Rating: {comment.rating} {comment.rating === 1 ? 'Star': 'Stars'}
+                        </Typography>
+                        </Box>
+                    ))
+                ) : (
+                    <Typography variant ="body2">No comments yet</Typography>
+                )}
+                </Box> */}
+                <Box mt={8}>
+                    {feedback.length > 0 ? (
+                        feedback.map((feed, index) => (
+                        <Box key={index} style={{marginBottom: '10px'}}>
+                            <Typography variant="body2" style={{ fontWeight: 'bold'}}>
+                                <strong>{feed.username}</strong>
+                        </Typography>
+                            <Typography variant="body2" style={{marginTop: '5px'}}>
+                            {feed.comment}
+                            </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            Rating: {feed.rating} {feed.rating === 1 ? 'Star': 'Stars'}
                         </Typography>
                         </Box>
                     ))

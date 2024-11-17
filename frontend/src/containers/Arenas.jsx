@@ -162,7 +162,7 @@ const Arenas = () => {
                                     Rate: ${arena.rate}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Rating: {arena.rating} ⭐
+                                    Rating: {arena.rating.toFixed(1)} ⭐
                                 </Typography>
                                 <Button 
                                     variant="contained" 

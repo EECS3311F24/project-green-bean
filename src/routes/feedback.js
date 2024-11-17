@@ -94,6 +94,26 @@ router.post("/", async (req, res) => {
         rating: rating || 0,
         arenaId : arenaId, 
     });
+
+     // Fetch all feedback for the arena to calculate average rating
+     const feedbackRef = collection(fireStoredb, "feedback");
+     const q = query(feedbackRef, where("arenaId", "==", arenaId));
+     const feedbackSnapshot = await getDocs(q);
+ 
+     let totalRating = 0;
+     let feedbackCount = 0;
+ 
+     feedbackSnapshot.forEach((doc) => {
+       const data = doc.data();
+       totalRating += data.rating;
+       feedbackCount++;
+     });
+ 
+     // Calculate average rating
+     const avgRating = feedbackCount > 0 ? totalRating / feedbackCount : 0;
+ 
+     // Update the arena's average rating
+     await setDoc(arenaRef, { rating: avgRating }, { merge: true });
       // Emit a Socket.IO event to notify clients of new feedback
       const io = req.app.get("socketio");
       io.emit("newFeedback", { id: newFeedbackRef.id});
