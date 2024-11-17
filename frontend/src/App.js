@@ -4,7 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./containers/Header";
 import Login from "./containers/Login";
 import BookingPage from "./containers/BookingPage";
@@ -16,7 +16,16 @@ import { useAuth } from "./state/AuthContext";
 
 function App() {
   const { userData } = useAuth();
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(() => {
+    // Check if userName exists in localStorage and use it, otherwise default to an empty string
+    return localStorage.getItem("userName") || "";
+  });
+
+  useEffect(() => {
+    if (userName) {
+      localStorage.setItem("userName", userName);  // Store userName in localStorage
+    }
+  }, [userName]);  // Runs whenever userName changes
   return (
     <Router>
       <Header userName={userData?.name || userName} setUserName={setUserName} />

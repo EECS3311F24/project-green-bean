@@ -159,7 +159,7 @@ useEffect(() => {
         navigate(`/testing/${arena.id}`, { state: { 
             name: arena.name,
             id: arena.id
-        }}); // Pass arena details to BookingPage
+        }}); // Pass arena details to TextComment test page
     };
     return (
         <div style={{ padding: '20px' }}>
@@ -245,7 +245,7 @@ useEffect(() => {
                                     Rate: ${arena.rate}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Rating: {arena.rating} ⭐
+                                    Rating: {arena.rating.toFixed(1)} ⭐
                                 </Typography>
                                 <Button
                                     variant="contained"
@@ -255,14 +255,14 @@ useEffect(() => {
                                 >
                                     Book
                                 </Button>
-                                <Button 
+                                {/* <Button 
                                     variant="contained" 
                                     color="primary" 
                                     style={{ marginTop: '10px' }}
                                     onClick={() => handleComment(arena)} 
                                 >
                                     check comments
-                                </Button>
+                                </Button> */}
                             </CardContent>
                         </Card>
                     </Grid>
