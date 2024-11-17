@@ -22,8 +22,6 @@ function App() {
   });
 
   useEffect(() => {
-    // You could set the username from a login event or other logic
-    // For now, just ensure the userName is stored in localStorage
     if (userName) {
       localStorage.setItem("userName", userName);  // Store userName in localStorage
     }

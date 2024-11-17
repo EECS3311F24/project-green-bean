@@ -114,6 +114,7 @@ router.post("/", async (req, res) => {
  
      // Update the arena's average rating
      await setDoc(arenaRef, { rating: avgRating }, { merge: true });
+     
       // Emit a Socket.IO event to notify clients of new feedback
       const io = req.app.get("socketio");
       io.emit("newFeedback", { id: newFeedbackRef.id});

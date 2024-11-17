@@ -101,8 +101,7 @@ const BookingPage = ({ userName }) => {
             const response = await postBooking(bookingData); // Call the API function
             console.log('Booking data submitted:', response);
             // Redirect to the ConfirmedBookingPage with booking details
-            window.location.reload(false);
-            // navigate('/confirmed', { state: { bookingId: response.id, ...bookingData } });
+            navigate('/confirmed', { state: { bookingId: response.id, ...bookingData } });
         } catch (error) {
             console.error('Error submitting booking:', error);
             // Optionally handle the error (e.g., show a message to the user)
@@ -110,14 +109,14 @@ const BookingPage = ({ userName }) => {
     };
 
     const handleCommentChange = (e) =>{
-        setNewComment(e.target.value);
+        setNewComment(e.target.value); //set comment for useState
     };
 
     const handleRatingChange = (e) => {
-        setRating(parseInt(e.target.value, 10));
+        setRating(parseInt(e.target.value, 10)); //set rating for useState
     };
 
-    const handleCommentSubmit = async (e) => {
+    const handleCommentSubmit = async (e) => { //handle form submission for creating a feedback
         e.preventDefault();
         console.log("userName", userName);
         const feedbackData = {

@@ -1,3 +1,5 @@
+//This page is used for testing the apis for feedback.js
+
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchAllFeedback, fetchFeedback, postFeedback } from '../fetch/feedback';
@@ -29,7 +31,7 @@ const TestCommentPage = ({userName}) => {
     // Destructure the passed data
     const { name, id } = state;
     
-    useEffect(() =>{
+    useEffect(() =>{ // fetche the feedback collection from firebase. Depending on the arena id
         const getFeedback = async () =>{
             try{
                 const data = await fetchFeedback(id);
@@ -49,7 +51,7 @@ const TestCommentPage = ({userName}) => {
         return () => socket.off("new-feedback");
     }, []);
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { //gets value from the text fields
         const { name, value, type, checked } = e.target;
             setFormData({
                 ...formData,
@@ -57,7 +59,7 @@ const TestCommentPage = ({userName}) => {
             });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => { //handle form submission for creating a feedback
         e.preventDefault();
         console.log("Form submitted with data:", formData);
 

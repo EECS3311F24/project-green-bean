@@ -78,7 +78,7 @@ const Arenas = () => {
         navigate(`/testing/${arena.id}`, { state: { 
             name: arena.name,
             id: arena.id
-        }}); // Pass arena details to BookingPage
+        }}); // Pass arena details to TextComment test page
     };
 
     return (
@@ -172,14 +172,14 @@ const Arenas = () => {
                                 >
                                     Book
                                 </Button>
-                                <Button 
+                                {/* <Button 
                                     variant="contained" 
                                     color="primary" 
                                     style={{ marginTop: '10px' }}
                                     onClick={() => handleComment(arena)} 
                                 >
                                     check comments
-                                </Button>
+                                </Button> */}
                             </CardContent>
                         </Card>
                     </Grid>
