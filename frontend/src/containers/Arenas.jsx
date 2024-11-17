@@ -5,7 +5,6 @@ import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
-import {useAuth} from '../state/AuthContext';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Card,
@@ -27,8 +26,7 @@ const Arenas = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchText, setSearchText] = useState("");
-    const {isAuthenticated, userData } = useAuth();
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Initialize navigate
 
     const dispatch = useDispatch()
     const filters = useSelector((state) => state.filter?.data)
@@ -38,24 +36,20 @@ const Arenas = () => {
     console.log(filters, "filters")
 
     useEffect(() => {
-        console.log(userData);
-        if (isAuthenticated) {
-            const getArenas = async () => {
-                try {
-                    const data = await fetchArenas();
-                    setArenas(data);
-                    setFilteredArenas(data);
-                } catch (error) {
-                    setError(error.message);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            getArenas();
-        } 
-        else {
-            navigate('/');
-        }
+        console.log(process.env.REACT_APP_SERVICE_ID);
+        const getArenas = async () => {
+            try {
+                const data = await fetchArenas();
+                setArenas(data);
+                setFilteredArenas(data);
+                dispatch(setInitialdata(data))
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        getArenas();
     }, []);
 
     useEffect(() => {
@@ -70,47 +64,84 @@ const Arenas = () => {
     }, [searchText]);
 
     useEffect(() => {
-        console.log("called", filterapplied, initialdata)
-        if(Object.values(filters).length > 0){
-            setFilteredArenas(() => {
-                return arenas.filter((arena) => {
-                    const matchesLocation = filters?.location
-                        ? arena?.location?.toLowerCase().startsWith(filters.location.toLowerCase())
-                        : true;
+        console.log("Filters object: ", filters);
+        console.log("Initial arenas list: ", arenas);
     
-                    const matchesAddress = filters?.address
-                        ? arena?.address?.toLowerCase().includes(filters.address.toLowerCase())
-                        : true;
+        if (Object.values(filters).length > 0) {
+            const filtered = arenas.filter((arena) => {
+                // Public/Private Filter
+                const matchesType = filters?.type
+                    ? (filters?.type.toLowerCase() === 'yes' && arena?.isPublic === true) ||
+                      (filters?.type.toLowerCase() === 'no' && arena?.isPublic === false)
+                    : true;
+    
+                return matchesType;
+            });
+    
+            console.log("Filtered arenas: ", filtered);
+            setFilteredArenas(filtered);
+        } else {
+            setFilteredArenas(initialdata);  // Reset if no filters
+        }
+    }, [filters, arenas]);  // Trigger when filters or arenas change
 
-                       
-    
-                    const matchesType = filters?.type
-                        ? arena?.isPublic === (filters.type.toLowerCase() === 'yes' ? true :false)
-                        : true;
-    
-                    // const matchesRating = filters?.rating
-                    //     ? parseFloat(arena?.rating) >= parseFloat(filters?.rating)
-                    //     : true;
-    
-                    const matchesRate = filters?.rate
-                        ? arena?.rate >= filters.rate[0] && arena?.rate <= filters?.rate[1]
-                        : true;
-    
-                    return (
-                        matchesLocation &&
-                        matchesAddress &&
-                        matchesType  &&
-                        // matchesRating &&
-                        matchesRate
-                    );
+    // Location Filter useEffect
+    useEffect(() => {
+        console.log("Location filter applied:", filters?.location);
+        if (filters?.location) {
+            setFilteredArenas((prevArenas) => {
+                return prevArenas.filter((arena) => {
+                    return arena?.location?.toLowerCase().includes(filters.location.toLowerCase());
                 });
             });
-        }else{
-            setFilteredArenas(initialdata)
-            setArenas(initialdata)
+        } else {
+            setFilteredArenas(initialdata);  // Reset if no location filter
         }
-       
-    }, [filterapplied]);
+    }, [filters?.location, filterapplied]);  // Trigger when location filter changes
+    
+
+// Address Filter useEffect
+useEffect(() => {
+    console.log("Address filter applied:", filters?.address);
+    if (filters?.address) {
+        setFilteredArenas((prevArenas) => {
+            return prevArenas.filter((arena) => {
+                return arena?.address?.toLowerCase().includes(filters.address.toLowerCase());
+            });
+        });
+    } else {
+        setFilteredArenas(initialdata);  // Reset if no address filter
+    }
+}, [filters?.address, filterapplied]);  // Trigger when address filter changes
+
+// Public/Private Filter useEffect
+useEffect(() => {
+    console.log("Public/Private filter applied:", filters?.type);
+    if (filters?.type) {
+        setFilteredArenas((prevArenas) => {
+            return prevArenas.filter((arena) => {
+                return (filters.type.toLowerCase() === 'yes' && arena?.isPublic === true) ||
+                       (filters.type.toLowerCase() === 'no' && arena?.isPublic === false);
+            });
+        });
+    } else {
+        setFilteredArenas(initialdata);  // Reset if no type filter
+    }
+}, [filters?.type, filterapplied]);  // Trigger when type (public/private) filter changes
+
+// Rate Filter useEffect
+useEffect(() => {
+    console.log("Rate filter applied:", filters?.rate);
+    if (filters?.rate) {
+        setFilteredArenas((prevArenas) => {
+            return prevArenas.filter((arena) => {
+                return arena?.rate >= filters.rate[0] && arena?.rate <= filters?.rate[1];
+            });
+        });
+    } else {
+        setFilteredArenas(initialdata);  // Reset if no rate filter
+    }
+}, [filters?.rate, filterapplied]);  // Trigger when rate filter changes
 
     if (loading) return <CircularProgress />;
     if (error) return <Alert severity="error">Error fetching arenas: {error}</Alert>;

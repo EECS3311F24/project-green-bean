@@ -21,7 +21,8 @@ export default function FilteringComponent() {
   const handleFilterChange = (field, value) => {
     // setFilters(prev => ({ ...prev, [field]: value }))
     dispatch(handleFilterState({
-      ...filters, [field]: value
+      ...filters, 
+      [field]: value,
     }))
   }
 
@@ -30,9 +31,7 @@ export default function FilteringComponent() {
   }
 
   const submitFilter = () => {
-    dispatch(handleApplied
-      ()
-    )
+    dispatch(handleApplied())
     setIsFilterOpen(!isFilterOpen)
   }
 
@@ -144,7 +143,7 @@ export default function FilteringComponent() {
             <input
               type="range"
               min="0"
-              max="100"
+              max="150"
               step="1"
               value={filters.rate[1]}
               onChange={(e) => handleFilterChange('rate', [0, parseInt(e.target.value)])}
@@ -172,13 +171,12 @@ export default function FilteringComponent() {
             </select>
           </div>
 
-          {/* Apply Filters Button */}
+          {/*Apply Filters Button
           <button
             onClick={submitFilter}
             className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700"
           >
-            Apply Filters
-          </button>
+          </button> */}
         </motion.div>
       )}
     </div>

@@ -7,6 +7,9 @@ import {
     CardContent,
     TextField,
     Button,
+    Radio,
+    RadioGroup,
+    FormControl,
     FormControlLabel,
     Checkbox,
     Grid,
@@ -14,7 +17,7 @@ import {
 } from '@mui/material';
 import { postBooking } from '../fetch/bookings';
 
-const BookingPage = () => {
+const BookingPage = ({ userName }) => {
     const location = useLocation(); // Get the location object
     const navigate = useNavigate(); // Hook for navigation
     const { state } = location; // Get the state passed from the previous page
@@ -35,6 +38,10 @@ const BookingPage = () => {
         },
     });
 
+    const [comments,setComments] = useState([]);
+    const [newComment, setNewComment] = useState('');
+    const [rating, setRating] = useState(0);
+    
     // Check if the state exists
     if (!state) {
         return <Typography variant="h6">No arena details available.</Typography>;
@@ -80,6 +87,23 @@ const BookingPage = () => {
         } catch (error) {
             console.error('Error submitting booking:', error);
             // Optionally handle the error (e.g., show a message to the user)
+        }
+    };
+
+    const handleCommentChange = (e) =>{
+        setNewComment(e.target.value);
+    };
+
+    const handleRatingChange = (e) => {
+        setRating(parseInt(e.target.value, 10));
+    };
+
+    const handleCommentSubmit = (e) => {
+        e.preventDefault();
+        if(newComment.trim() && userName){
+            setComments([...comments,{ text: newComment, rating, userName }]);
+            setNewComment('');
+            setRating(0);
         }
     };
 
@@ -241,6 +265,60 @@ const BookingPage = () => {
                     </Grid>
                 </Grid>
             </form>
+            <Box mt={8}>
+              <Typography variant="h5" gutterBottom>Comments</Typography>
+              <form onSubmit={handleCommentSubmit}>
+                <TextField
+                    fullWidth
+                    label="Add a comment"
+                    value={newComment}
+                    onChange={handleCommentChange}
+                    variant="outlined"
+                    multiline
+                    rows={2}
+                />
+                <FormControl component="fieldset" style={{marginTop : '25px'}}>
+                    <Typography variant="body1">Rate this venue:</Typography>
+                    <RadioGroup
+                        row
+                        value={rating}
+                        onChange={handleRatingChange}>
+                            {[1, 2, 3, 4, 5].map((value) => (
+                                <FormControlLabel
+                                key={value}
+                                value={value}
+                                control={<Radio />}
+                                label={`${value} ${value === 1 ? 'star' : 'Stars'}`}
+                                />
+                            ))}
+                        </RadioGroup>
+                </FormControl>
+                <Button type="submit" variant="contained" color="primary" style={{marginTop: '10px'}}>
+                    Submit Comment
+                </Button>
+                </form>  
+                <Box mt={8}>
+                    {comments.length > 0 ? (
+                        comments.map((comment, index) => (
+                        <Box key={index} style={{marginBottom: '10px'}}>
+                            <Typography variant="body2" style={{ fontWeight: 'bold'}}>
+                                <strong>{comment.userName}</strong>
+                        </Typography>
+                            <Typography variant="body2" style={{marginTop: '5px'}}>
+                            {comment.text}
+                            </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            Rating: {comment.rating} {comment.rating === 1 ? 'Star': 'Stars'}
+                        </Typography>
+                        </Box>
+                    ))
+                ) : (
+                    <Typography variant ="body2">No comments yet</Typography>
+                )}
+                </Box>
+                
+            </Box>              
+                            
         </Box>
     );
 };
