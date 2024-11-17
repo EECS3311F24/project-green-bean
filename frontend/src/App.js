@@ -23,7 +23,7 @@ function App() {
         <Route path="/" element={<Login setUserName={setUserName} />} />
         <Route path="/arenas" element={<Arenas />} />
         <Route path="/api/auth/callback" element={<GoogleAuthCallback />} />
-        <Route path="/booking/:id" element={<BookingPage />} />
+        <Route path="/booking/:id" element={<BookingPage userName={userData?.name || userName} />} />
         <Route path="/confirmed" element={<ConfirmedBookingPage />} />
         <Route path="*" element={<Navigate to="/" />} />{" "}
       </Routes>
