@@ -19,7 +19,7 @@ const Header = ({ userName, setUserName }) => {
       <h1 className="project-name">Green Bean</h1>
       <div className="user-name">
         <div>{userName}</div>
-        {isAuthenticated && <div>
+        {(isAuthenticated || localStorage.getItem('isAuthenticated') == 'true') && <div>
             <button onClick={handleLogout} className="logout-btn">
                 Log Out
             </button>

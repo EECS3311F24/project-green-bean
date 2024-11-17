@@ -10,11 +10,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = (user) => {
     setIsAuthenticated(true);
+    localStorage.setItem("isAuthenticated", "true");
     setUserData(user); // Set user data on login
   };
 
   const logout = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem("isAuthenticated", "true");
     setUserData(null); // Clear user data on logout
   };
 
