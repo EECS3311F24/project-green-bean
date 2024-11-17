@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
+import {useAuth} from '../state/AuthContext';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Card,
@@ -23,21 +24,29 @@ const Arenas = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchText, setSearchText] = useState("");
-    const navigate = useNavigate(); // Initialize navigate
+    const {isAuthenticated, userData } = useAuth();
+    const navigate = useNavigate(); 
 
     useEffect(() => {
-        const getArenas = async () => {
-            try {
-                const data = await fetchArenas();
-                setArenas(data);
-                setFilteredArenas(data);
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        getArenas();
+        console.log(process.env.REACT_APP_SERVICE_ID);
+        // if (isAuthenticated) {
+            const getArenas = async () => {
+                try {
+                    const data = await fetchArenas();
+                    setArenas(data);
+                    setFilteredArenas(data);
+                } catch (error) {
+                    setError(error.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            getArenas();
+        // } 
+        // else {
+        //     navigate('/');
+        // }
+        
     }, []);
 
     useEffect(() =>{
