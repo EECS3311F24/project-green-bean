@@ -8,7 +8,7 @@ const cors = require("cors");
 const error = require("../middleware/error");
 
 const corsOptions = {
-  origin: "http://localhost:3000", // Set the exact origin of your frontend
+  origin: "http://localhost:3001", // Set the exact origin of your frontend
   credentials: true, // Allow cookies and credentials to be included
   allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers (e.g., for Authorization)
 };
