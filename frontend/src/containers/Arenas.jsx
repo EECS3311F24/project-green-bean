@@ -50,8 +50,7 @@ const Arenas = () => {
                 setLoading(false);
             }
         };
-
-        if (isAuthenticated || localStorage.getItem('isAuthenticated') == 'true') {
+        if (isAuthenticated) {
             getArenas();
         } else {
             navigate('/');
@@ -70,6 +69,57 @@ const Arenas = () => {
         });
     }, [searchText, arenas]);
 
+    useEffect(() => {
+        console.log("Filters object: ", filters);
+        console.log("Initial arenas list: ", arenas);
+    
+        if (Object.values(filters).length > 0) {
+            const filtered = arenas.filter((arena) => {
+                // Public/Private Filter
+                const matchesType = filters?.type
+                    ? (filters?.type.toLowerCase() === 'yes' && arena?.isPublic === true) ||
+                      (filters?.type.toLowerCase() === 'no' && arena?.isPublic === false)
+                    : true;
+    
+                return matchesType;
+            });
+    
+            console.log("Filtered arenas: ", filtered);
+            setFilteredArenas(filtered);
+        } else {
+            setFilteredArenas(initialdata);  // Reset if no filters
+        }
+    }, [filters, arenas]);  // Trigger when filters or arenas change
+
+// Location Filter useEffect
+useEffect(() => {
+    console.log("Location filter applied:", filters?.location);
+    if (filters?.location) {
+        setFilteredArenas((prevArenas) => {
+            return prevArenas.filter((arena) => {
+                return arena?.location?.toLowerCase().includes(filters.location.toLowerCase());
+            });
+        });
+    } else {
+        setFilteredArenas(initialdata);  // Reset if no location filter
+    }
+}, [filters?.location, filterapplied]);  // Trigger when location filter changes
+    
+
+// Address Filter useEffect
+useEffect(() => {
+    console.log("Address filter applied:", filters?.address);
+    if (filters?.address) {
+        setFilteredArenas((prevArenas) => {
+            return prevArenas.filter((arena) => {
+                return arena?.address?.toLowerCase().includes(filters.address.toLowerCase());
+            });
+        });
+    } else {
+        setFilteredArenas(initialdata);  // Reset if no address filter
+    }
+}, [filters?.address, filterapplied]);  // Trigger when address filter changes
+
 // Public/Private Filter useEffect
 useEffect(() => {
     console.log("Public/Private filter applied:", filters?.type);
@@ -85,59 +135,51 @@ useEffect(() => {
     }
 }, [filters?.type, filterapplied]);  // Trigger when type (public/private) filter changes
 
-    useEffect(() => {
-        console.log("Location filter applied:", filters?.location);
-        if (filters?.location) {
-            setFilteredArenas((prevArenas) => {
-                return prevArenas.filter((arena) => {
-                    return arena?.location?.toLowerCase().includes(filters.location.toLowerCase());
-                });
-            });
-        } else {
-            setFilteredArenas(initialdata);  // Reset if no location filter
-        }
-    }, [filters, arenas]);
-
-    useEffect(() => {
-        console.log("Address filter applied:", filters?.address);
-        if (filters?.address) {
-            setFilteredArenas((prevArenas) => {
-                return prevArenas.filter((arena) => {
-                    return arena?.address?.toLowerCase().includes(filters.address.toLowerCase());
-                });
-            });
-        } else {
-            setFilteredArenas(initialdata);  // Reset if no address filter
-        }
-    }, [filters?.address, filterapplied, initialdata]);
-
-    // Public/Private Filter useEffect
-    useEffect(() => {
-        console.log("Public/Private filter applied:", filters?.type);
-        if (filters?.type) {
-            setFilteredArenas((prevArenas) => {
-                return prevArenas.filter((arena) => {
-                    return (filters.type.toLowerCase() === 'yes' && arena?.isPublic === true) ||
-                       (filters.type.toLowerCase() === 'no' && arena?.isPublic === false);
+// Rate Filter useEffect
+useEffect(() => {
+    console.log("Rate filter applied:", filters?.rate);
+    if (filters?.rate) {
+        setFilteredArenas((prevArenas) => {
+            return prevArenas.filter((arena) => {
+                return arena?.rate >= filters.rate[0] && arena?.rate <= filters?.rate[1];
             });
         });
     } else {
-        setFilteredArenas(initialdata);  // Reset if no type filter
+        setFilteredArenas(initialdata);  // Reset if no rate filter
     }
-    }, [filters?.type, filterapplied]);  // Trigger when type (public/private) filter changes
+}, [filters?.rate, filterapplied]);  // Trigger when rate filter changes
 
-    useEffect(() => {
-        console.log("Rate filter applied:", filters?.rate);
-        if (filters?.rate) {
-            setFilteredArenas((prevArenas) => {
-                return prevArenas.filter((arena) => {
-                    return arena?.rate >= filters.rate[0] && arena?.rate <= filters?.rate[1];
-                });
+// Sport type Filter useEffect
+useEffect(() => {
+    console.log("Sport filter applied:", filters?.sport);
+    if (filters?.sport) {
+        const filtered = initialdata.filter((arena) =>
+            arena?.sport?.toLowerCase() === filters.sport.toLowerCase()
+        );
+        console.log("Filtered arenas by sport:", filtered);
+        setFilteredArenas(filtered);
+    } else {
+        setFilteredArenas(initialdata); // Reset to all arenas if no filter
+    }
+}, [filters?.sport, initialdata]);
+
+// Minimum Ratings Filter useEffect
+useEffect(() => {
+    console.log("Rate filter applied:", filters?.rating);
+
+    if (filters?.rating) {
+        const minRating = parseFloat(filters.rating); // Convert filter to number
+
+        setFilteredArenas((prevArenas) => {
+            return prevArenas.filter((arena) => {
+                const arenaRating = Number(arena?.rating); // Ensure `rating` is a number
+                return arenaRating >= minRating; // Compare with the minimum rating
             });
-        } else {
-            setFilteredArenas(initialdata);  // Reset if no rate filter
-        }
-    }, [filters?.rate, filterapplied, initialdata]);
+        });
+    } else {
+        setFilteredArenas(initialdata); // Reset to initial data if no filter is applied
+    }
+}, [filters?.rating, filterapplied]); // Trigger whenever `rating` or filter state changes
 
     if (loading) return <CircularProgress />;
     if (error) return <Alert severity="error">Error fetching arenas: {error}</Alert>;
@@ -152,14 +194,6 @@ useEffect(() => {
                 id: arena.id
             }
         }); // Pass arena details to BookingPage
-    };
-
-    const handleComment = (arena) => {
-        console.log(arena);
-        navigate(`/testing/${arena.id}`, { state: { 
-            name: arena.name,
-            id: arena.id
-        }}); // Pass arena details to TextComment test page
     };
     return (
         <div style={{ padding: '20px' }}>
@@ -245,7 +279,7 @@ useEffect(() => {
                                     Rate: ${arena.rate}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Rating: {arena.rating.toFixed(1)} ⭐
+                                    Rating: {arena.rating} ⭐
                                 </Typography>
                                 <Button
                                     variant="contained"
@@ -255,14 +289,6 @@ useEffect(() => {
                                 >
                                     Book
                                 </Button>
-                                {/* <Button 
-                                    variant="contained" 
-                                    color="primary" 
-                                    style={{ marginTop: '10px' }}
-                                    onClick={() => handleComment(arena)} 
-                                >
-                                    check comments
-                                </Button> */}
                             </CardContent>
                         </Card>
                     </Grid>

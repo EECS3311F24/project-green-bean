@@ -7,13 +7,6 @@ import { clearFilterstate, handleApplied, handleFilterState } from '../store/Fil
 
 export default function FilteringComponent() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
-  // const [filters, setFilters] = useState({
-  //   location: '',
-  //   address: '',
-  //   type: '',
-  //   rate: [0, 100],
-  //   rating: ''
-  // })
 
   const dispatch = useDispatch()
   const filters = useSelector((state) => state.filter.data)
@@ -71,17 +64,21 @@ export default function FilteringComponent() {
               clear filter
             </button>
           </div>
-          {/* Location Filter */}
+
+      {/* Location type Filter */}
           <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700 my-2">Location</label>
-            <input
+            <label htmlFor="location" className="block text-sm font-medium text-gray-800">Location</label>
+            <select
               id="location"
-              type="text"
-              placeholder="Enter location"
               value={filters.location}
-              onChange={(e) => handleFilterChange('location', e.target.value)}
-              className="mt-1 block p-2 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
+              onChange={(e) => handleFilterChange('sport', e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            >
+              <option value="">Any</option>
+              <option value="Eastside">Eastside</option>
+              <option value="New York City">New York City</option>
+              <option value="West End">West End</option>
+            </select>
           </div>
 
           {/* Address Filter */}
@@ -155,21 +152,40 @@ export default function FilteringComponent() {
             </div>
           </div>
 
-          {/* Rating Filter */}
+          {/* Sports type Filter */}
           <div>
-            <label htmlFor="rating" className="block text-sm font-medium text-gray-700">Minimum Rating</label>
+            <label htmlFor="sport" className="block text-sm font-medium text-gray-800">Sports Type</label>
+          <select
+            id="sport"
+            value={filters.sport || ""} // Use the correct filter key
+            onChange={(e) => handleFilterChange('sport', e.target.value)} // Change 'rating' to 'sport'
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          >
+          <option value="">Any</option>
+          <option value="basketball">Basketball</option>
+          <option value="tennis">Tennis</option>
+          <option value="badminton">Badminton</option>
+        </select>
+      </div>
+
+
+          {/* Ratings Filter */}
+          <div>
+            <label htmlFor="rating" className="block text-sm font-medium text-gray-700">Rating</label>
             <select
               id="rating"
               value={filters.rating}
               onChange={(e) => handleFilterChange('rating', e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            >
+  >
               <option value="">Any</option>
-              <option value="4.0">4.0+</option>
-              <option value="4.5">4.5+</option>
+              <option value="3.0">3.0+</option>
+              <option value="3.1">3.1+</option>
               <option value="4.8">4.8+</option>
-            </select>
-          </div>
+              <option value="4.9">4.9+</option>
+              </select>
+            </div>
+
 
           {/*Apply Filters Button
           <button
