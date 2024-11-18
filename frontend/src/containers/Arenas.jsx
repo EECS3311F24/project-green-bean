@@ -50,7 +50,7 @@ const Arenas = () => {
                 setLoading(false);
             }
         };
-        if (isAuthenticated) {
+        if (isAuthenticated || localStorage.getItem('isAuthenticated') == 'true') {
             getArenas();
         } else {
             navigate('/');
