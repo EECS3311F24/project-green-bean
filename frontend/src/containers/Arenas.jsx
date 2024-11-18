@@ -254,9 +254,9 @@ useEffect(() => {
                             {arena.image && (
                                 <CardMedia
                                     component="img"
-                                    height="240"
                                     image={arena.image}
                                     alt={arena.name}
+                                    style={{width: '100%', height: '250px'}}
                                 />
                             )}
                             <CardContent>
