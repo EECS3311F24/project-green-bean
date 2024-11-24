@@ -10,15 +10,24 @@ export const AuthProvider = ({ children }) => {
 
   const login = (user) => {
     setIsAuthenticated(true);
+    console.log(user);
+    if (user && user.email && !localStorage.getItem("email")) {
+      localStorage.setItem("email", user.email);
+    }
+    if (user && user.name) {
+      localStorage.setItem("userName", user.name);
+    }
+
     localStorage.setItem("isAuthenticated", "true");
-    setUserData(user); // Set user data on login
+    setUserData(user);
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem("isAuthenticated", "true");
     localStorage.removeItem("userName");
-    setUserData(null); // Clear user data on logout
+    localStorage.removeItem("email");
+    setUserData(null);
   };
 
   return (
