@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../state/AuthContext'; // Assuming you have AuthContext for user info
-import { IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit'; // Importing the Edit icon
-import './_styling/currentBooking.css'; // Add your CSS styling
+import { useAuth } from '../state/AuthContext'; 
+import { useNavigate } from "react-router-dom";
+import { Typography,IconButton, Dialog,  Box,Alert,Snackbar, DialogTitle, DialogContent, TextField, DialogActions, Button } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit'; 
+import './_styling/currentBooking.css'; 
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const CurrentBooking = () => {
-  const { userName } = useAuth(); // Assuming userName is available in AuthContext
+  const { userName } = useAuth(); 
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "" });
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const [editBooking, setEditBooking] = useState(null); 
+  const [newTime, setNewTime] = useState("");
+  const [newDate, setNewDate] = useState("");
 
   // Helper function to check if booking is current or past
   const isCurrentBooking = (bookingDate, bookingTime) => {
     const bookingDateTime = new Date(`${bookingDate} ${bookingTime}`);
     const currentDateTime = new Date();
-    return bookingDateTime >= currentDateTime; // returns true if booking is in the future
+    return bookingDateTime >= currentDateTime; 
   };
 
   useEffect(() => {
@@ -27,11 +34,15 @@ const CurrentBooking = () => {
           url.search = new URLSearchParams(params).toString();
   
           const response = await fetch(url);
+    
+          const data = await response.json();
+          if (data.message == "No bookings found for this user") {
+            return;
+          }
+
           if (!response.ok) {
             throw new Error('Failed to fetch current bookings');
           }
-  
-          const data = await response.json();
           console.log(data);
           setBookings(data);
         } catch (err) {
@@ -43,20 +54,58 @@ const CurrentBooking = () => {
   
       fetchBookings();
     }
-  }, []); // Empty dependency array to run only once on mount
+  }, []); 
+
+  const handleEdit = (booking) => {
+    setEditBooking(booking);
+    setNewDate(booking.date);
+    setNewTime(booking.time);
+  };
+
+  const handleSave = async () => {
+    try {
+      const availabilityCheck = await fetch("http://localhost:3000/api/bookings/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ arenaId: editBooking.arenaId, date: newDate, time: newTime }),
+      });
+      const availability = await availabilityCheck.json();
+
+      if (!availability.available) {
+        setSnackbar({ open: true, message: "Selected time is not available", severity: "error" });
+        return;
+      }
+
+      const response = await fetch(`http://localhost:3000/api/bookings/${editBooking.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: newDate, time: newTime, arenaId: editBooking.arenaId }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update booking");
+
+      setSnackbar({ open: true, message: "Booking updated successfully", severity: "success" });
+      setEditBooking(null);
+      setBookings((prev) =>
+        prev.map((b) => (b.id === editBooking.id ? { ...b, date: newDate, time: newTime } : b))
+      );
+    } catch (err) {
+      setSnackbar({ open: true, message: err.message, severity: "error" });
+    }
+  };
   
 
   return (
     <div className="current-booking-container">
+         <ArrowBackIcon className='back-arrow' onClick={() => navigate("/arenas")}/>
       <h1 style={{fontSize: '36px'}}>Bookings</h1>
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
-
       <div className="booking-list">
         {/* Current Bookings */}
         <h1 style={{fontSize: '25px'}}>Current Bookings</h1>
         {bookings.filter(booking => isCurrentBooking(booking.date, booking.time)).length === 0 ? (
-          <p>No current bookings</p>
+          <p className='no-book-text'>No current bookings</p>
         ) : (
           bookings
             .filter(booking => isCurrentBooking(booking.date, booking.time))
@@ -70,7 +119,7 @@ const CurrentBooking = () => {
                 </div>
                 <div className="edit-btn-container">
                   <IconButton className="edit-btn" aria-label="edit booking">
-                    <EditIcon />
+                    <EditIcon onClick={() => handleEdit(booking)}/>
                   </IconButton>
                 </div>
               </div>
@@ -80,7 +129,7 @@ const CurrentBooking = () => {
         {/* Past Bookings */}
         <h1 style={{fontSize: '25px'}}>Past Bookings</h1>
         {bookings.filter(booking => !isCurrentBooking(booking.date, booking.time)).length === 0 ? (
-          <p>No past bookings</p>
+          <p className='no-book-text '>No past bookings</p>
         ) : (
           bookings
             .filter(booking => !isCurrentBooking(booking.date, booking.time))
@@ -96,6 +145,66 @@ const CurrentBooking = () => {
             ))
         )}
       </div>
+
+
+      <Dialog open={!!editBooking} onClose={() => setEditBooking(null)}>
+  <DialogTitle>Edit Booking</DialogTitle>
+  <DialogContent>
+    <Box sx={{ marginBottom: 2 }}>
+      <Typography variant="body1"><strong>Arena Name:</strong> {editBooking?.arenaName}</Typography>
+    </Box>
+    <TextField
+      label="Date"
+      type="date"
+      fullWidth
+      value={newDate}
+      onChange={(e) => setNewDate(e.target.value)}
+      sx={{ marginBottom: 2, marginTop: 2 }}
+    />
+    <TextField
+      label="Time"
+      type="time"
+      fullWidth
+      value={newTime}
+      onChange={(e) => setNewTime(e.target.value)}
+    />
+  </DialogContent>
+  <DialogActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
+    <Button 
+      onClick={() => setEditBooking(null)} 
+      sx={{ color: 'red',
+        '&:hover': {
+          backgroundColor: 'red',
+          color: 'white'  
+        }
+      }}
+    >
+      Cancel
+    </Button>
+    <Button 
+      onClick={handleSave}
+      sx={{
+        '&:hover': {
+          backgroundColor: '#4CAF50', 
+          color: 'white' 
+        }
+      }}
+    >
+      Save
+    </Button>
+  </DialogActions>
+</Dialog>
+
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

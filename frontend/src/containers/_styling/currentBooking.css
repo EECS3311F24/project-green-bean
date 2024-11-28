@@ -27,7 +27,19 @@
   margin: 10px 0;
   background-color: #f9f9f9;
   border-radius: 8px;
-  position: relative; /* Ensure positioning of edit button */
+  position: relative;
+}
+
+.no-book-text {
+  position: relative;
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+.back-arrow {
+  position: relative;
+  margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .booking-details {
@@ -42,7 +54,7 @@
 }
 
 .edit-btn {
-  color: #1976d2; /* Customize button color */
+  color: #1976d2;
   background-color: transparent;
   padding: 0;
 }

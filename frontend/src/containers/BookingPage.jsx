@@ -15,8 +15,10 @@ import {
   Grid,
   Box,
 } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { postBooking, checkAvailability } from "../fetch/bookings";
 import { fetchFeedback, postFeedback } from "../fetch/feedback";
+import "./_styling/bookingPage.css"
 
 const BookingPage = ({ userName }) => {
   const location = useLocation();
@@ -124,6 +126,8 @@ const BookingPage = ({ userName }) => {
   };
 
   return (
+    <>
+        <ArrowBackIcon className='back-arrow' onClick={() => navigate("/arenas")}/>
     <Box
       sx={{
         width: "50%",
@@ -320,6 +324,7 @@ const BookingPage = ({ userName }) => {
         </Box>
       </Box>
     </Box>
+    </>
   );
 };
 

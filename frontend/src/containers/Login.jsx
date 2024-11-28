@@ -60,6 +60,7 @@ const Login = ({ setUserName, setUserEmail }) => {
             <input
               type="text"
               id="firstName"
+              name='firstName'
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
@@ -70,6 +71,7 @@ const Login = ({ setUserName, setUserEmail }) => {
             <input
               type="text"
               id="lastName"
+              name='lastName'
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required

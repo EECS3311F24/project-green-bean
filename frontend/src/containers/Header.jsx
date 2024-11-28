@@ -6,22 +6,20 @@ import { useNavigate } from 'react-router-dom';
 const Header = ({ userName, setUserName, setEmail }) => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
-
-  // State to toggle dropdown visibility
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Function to handle logout and redirect to the login page
   const handleLogout = () => {
     logout();  
     setUserName('');
-    setIsDropdownOpen(false);  // Close dropdown after logout
-    navigate("/login");  // Redirect to login page
+    setIsDropdownOpen(false);  
+    navigate("/login");  
   };
 
   // Function to handle the current booking click
   const handleCurrentBooking = () => {
-    navigate("/current-booking");  // Update the path as needed
-    setIsDropdownOpen(false);  // Close the dropdown after navigation
+    navigate("/current-booking");  
+    setIsDropdownOpen(false);  
   };
 
   // Toggle the dropdown visibility
@@ -35,7 +33,7 @@ const Header = ({ userName, setUserName, setEmail }) => {
       {(isAuthenticated || localStorage.getItem('isAuthenticated') == 'true') &&
       <div className="user-name">
         <div onClick={toggleDropdown} className="user-name-text">
-          {userName} <span>&#9662;</span> {/* Downward arrow to indicate dropdown */}
+          {userName} <span>&#9662;</span> 
         </div>
         {isDropdownOpen && (
           <div className="dropdown-menu">

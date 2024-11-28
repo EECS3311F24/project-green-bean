@@ -33,7 +33,7 @@
                     .send(serviceID, templateID, templateParams, userID)
                     .then((response) => {
                         console.log("Email sent successfully:", response.status, response.text);
-                        setEmailSent(true); // Update state to show confirmation message
+                        setEmailSent(true); 
                     })
                     .catch((error) => {
                         console.error("Failed to send email:", error);
