@@ -30,15 +30,11 @@ router.get("/", async (req, res) => {
 
 // Fetch booking by first and last name
 router.get("/user", async (req, res) => {
-  const { firstName, lastName } = req.query;
+  const { email } = req.query;
 
   try {
     const bookingsRef = collection(fireStoredb, "bookings");
-    const q = query(
-      bookingsRef,
-      where("firstName", "==", firstName),
-      where("lastName", "==", lastName)
-    );
+    const q = query(bookingsRef, where("email", "==", email));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
@@ -54,7 +50,7 @@ router.get("/user", async (req, res) => {
     res.status(200).json(bookings);
   } catch (error) {
     res.status(500).json({
-      message: "Failed to fetch booking by name",
+      message: "Failed to fetch booking by email",
       error: error.message,
     });
   }
@@ -67,6 +63,7 @@ router.post("/", async (req, res) => {
       firstName,
       lastName,
       phoneNumber,
+      arenaName,
       email,
       date,
       time,
@@ -80,6 +77,7 @@ router.post("/", async (req, res) => {
       !firstName ||
       !lastName ||
       !phoneNumber ||
+      !arenaName ||
       !email ||
       !date ||
       !time ||
@@ -111,6 +109,7 @@ router.post("/", async (req, res) => {
       firstName,
       lastName,
       phoneNumber,
+      arenaName,
       email,
       date,
       time,
@@ -119,19 +118,6 @@ router.post("/", async (req, res) => {
       arenaId: arenaId,
     });
 
-    // Update the arena with user booking information
-    await setDoc(
-      arenaRef,
-      {
-        isBooked: {
-          firstName,
-          lastName,
-          bookingId: newBookingRef.id,
-        },
-      },
-      { merge: true }
-    ); // Use merge to keep existing arena data
-
     res
       .status(201)
       .json({ message: "Booking created successfully", id: newBookingRef.id });
@@ -139,6 +125,69 @@ router.post("/", async (req, res) => {
     res
       .status(500)
       .json({ message: "Failed to create booking", error: error.message });
+  }
+});
+
+router.post("/check", async (req, res) => {
+  const { arenaId, date, time } = req.body;
+
+  try {
+    const bookingsRef = collection(fireStoredb, "bookings");
+    const q = query(
+      bookingsRef,
+      where("arenaId", "==", arenaId),
+      where("date", "==", date),
+      where("time", "==", time)
+    );
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      return res.status(200).json({ available: false });
+    }
+    res.status(200).json({ available: true });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error checking availability.",
+      error: err.message,
+    });
+  }
+});
+
+// Update booking time
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { time, date } = req.body;
+
+  try {
+    // Validate new time and date
+    if (!time || !date) {
+      return res.status(400).json({ message: "Date and time are required" });
+    }
+
+    // Check if the new time slot is available
+    const bookingsRef = collection(fireStoredb, "bookings");
+    const q = query(
+      bookingsRef,
+      where("arenaId", "==", req.body.arenaId),
+      where("date", "==", req.body.date),
+      where("time", "==", req.body.time)
+    );
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      return res.status(400).json({ message: "Time slot is not available" });
+    }
+
+    // Update the booking
+    const bookingRef = doc(fireStoredb, "bookings", id);
+    await setDoc(bookingRef, { time, date }, { merge: true });
+
+    res.status(200).json({ message: "Booking time updated successfully" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update booking time",
+      error: error.message,
+    });
   }
 });
 
