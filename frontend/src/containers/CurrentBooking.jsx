@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../state/AuthContext'; 
 import { useNavigate } from "react-router-dom";
-import { Typography,IconButton, Dialog,  Box,Alert,Snackbar, DialogTitle, DialogContent, TextField, DialogActions, Button } from "@mui/material";
+import { Typography, IconButton, Dialog, Box, Alert, Snackbar, DialogTitle, DialogContent, TextField, DialogActions, Button } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit'; 
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
+import CloseIcon from '@mui/icons-material/Close';
 import './_styling/currentBooking.css'; 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -16,6 +19,7 @@ const CurrentBooking = () => {
   const [editBooking, setEditBooking] = useState(null); 
   const [newTime, setNewTime] = useState("");
   const [newDate, setNewDate] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
 
   // Helper function to check if booking is current or past
   const isCurrentBooking = (bookingDate, bookingTime) => {
@@ -93,21 +97,62 @@ const CurrentBooking = () => {
       setSnackbar({ open: true, message: err.message, severity: "error" });
     }
   };
-  
+
+  // Filter bookings based on search term
+  const filteredBookings = bookings.filter((booking) => {
+    const bookingDetails = `${booking.arenaName} ${booking.date} ${booking.time} ${booking.email}`.toLowerCase();
+    return bookingDetails.includes(searchTerm.toLowerCase());
+  });
 
   return (
     <div className="current-booking-container">
-         <ArrowBackIcon className='back-arrow' onClick={() => navigate("/arenas")}/>
-      <h1 style={{fontSize: '36px'}}>Bookings</h1>
+      <ArrowBackIcon className='back-arrow' onClick={() => navigate("/arenas")}/>
+      <Box display="flex" alignItems="center" gap={2}>
+                <Typography variant="h4" component="h1" gutterBottom>
+                    Bookings
+                </Typography>
+        <TextField
+            variant="outlined"
+            placeholder="Search Bookings by Arena, Email, Time, or Date..."
+            InputProps={{
+                startAdornment: (
+                    <InputAdornment position="start">
+                        <SearchIcon sx={{ color: 'gray', fontSize: 22 }} />
+                    </InputAdornment>
+                ),
+                endAdornment: (
+                    searchTerm.length >= 1 ?
+                        <InputAdornment position="end">
+                            <CloseIcon onClick={() => setSearchTerm("")} sx={{ color: 'gray', fontSize: 22, cursor: 'pointer' }} />
+                        </InputAdornment>
+                        :
+                        null
+                )
+            }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{
+                '& .MuiOutlinedInput-root': {
+                    borderRadius: '50px',
+                },
+                width: '500px',
+                position: 'relative',
+                marginTop: '10px',
+                marginBottom: '20px',
+            }}
+        />
+        </Box>
+      
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
+      
       <div className="booking-list">
         {/* Current Bookings */}
         <h1 style={{fontSize: '25px'}}>Current Bookings</h1>
-        {bookings.filter(booking => isCurrentBooking(booking.date, booking.time)).length === 0 ? (
+        {filteredBookings.filter(booking => isCurrentBooking(booking.date, booking.time)).length === 0 ? (
           <p className='no-book-text'>No current bookings</p>
         ) : (
-          bookings
+          filteredBookings
             .filter(booking => isCurrentBooking(booking.date, booking.time))
             .map((booking) => (
               <div className="booking-item" key={booking.id}>
@@ -128,10 +173,10 @@ const CurrentBooking = () => {
 
         {/* Past Bookings */}
         <h1 style={{fontSize: '25px'}}>Past Bookings</h1>
-        {bookings.filter(booking => !isCurrentBooking(booking.date, booking.time)).length === 0 ? (
+        {filteredBookings.filter(booking => !isCurrentBooking(booking.date, booking.time)).length === 0 ? (
           <p className='no-book-text '>No past bookings</p>
         ) : (
-          bookings
+          filteredBookings
             .filter(booking => !isCurrentBooking(booking.date, booking.time))
             .map((booking) => (
               <div className="booking-item" key={booking.id}>
@@ -146,55 +191,53 @@ const CurrentBooking = () => {
         )}
       </div>
 
-
       <Dialog open={!!editBooking} onClose={() => setEditBooking(null)}>
-  <DialogTitle>Edit Booking</DialogTitle>
-  <DialogContent>
-    <Box sx={{ marginBottom: 2 }}>
-      <Typography variant="body1"><strong>Arena Name:</strong> {editBooking?.arenaName}</Typography>
-    </Box>
-    <TextField
-      label="Date"
-      type="date"
-      fullWidth
-      value={newDate}
-      onChange={(e) => setNewDate(e.target.value)}
-      sx={{ marginBottom: 2, marginTop: 2 }}
-    />
-    <TextField
-      label="Time"
-      type="time"
-      fullWidth
-      value={newTime}
-      onChange={(e) => setNewTime(e.target.value)}
-    />
-  </DialogContent>
-  <DialogActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-    <Button 
-      onClick={() => setEditBooking(null)} 
-      sx={{ color: 'red',
-        '&:hover': {
-          backgroundColor: 'red',
-          color: 'white'  
-        }
-      }}
-    >
-      Cancel
-    </Button>
-    <Button 
-      onClick={handleSave}
-      sx={{
-        '&:hover': {
-          backgroundColor: '#4CAF50', 
-          color: 'white' 
-        }
-      }}
-    >
-      Save
-    </Button>
-  </DialogActions>
-</Dialog>
-
+        <DialogTitle>Edit Booking</DialogTitle>
+        <DialogContent>
+          <Box sx={{ marginBottom: 2 }}>
+            <Typography variant="body1"><strong>Arena Name:</strong> {editBooking?.arenaName}</Typography>
+          </Box>
+          <TextField
+            label="Date"
+            type="date"
+            fullWidth
+            value={newDate}
+            onChange={(e) => setNewDate(e.target.value)}
+            sx={{ marginBottom: 2, marginTop: 2 }}
+          />
+          <TextField
+            label="Time"
+            type="time"
+            fullWidth
+            value={newTime}
+            onChange={(e) => setNewTime(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Button 
+            onClick={() => setEditBooking(null)} 
+            sx={{ color: 'red',
+              '&:hover': {
+                backgroundColor: 'red',
+                color: 'white'  
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSave}
+            sx={{
+              '&:hover': {
+                backgroundColor: '#4CAF50', 
+                color: 'white' 
+              }
+            }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snackbar.open}

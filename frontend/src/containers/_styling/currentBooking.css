@@ -30,14 +30,20 @@
   position: relative;
 }
 
+.search-bar {
+  width: 50% !important;
+  border-radius: 50px;
+}
+
 .no-book-text {
   position: relative;
   margin-left: 10px;
   margin-bottom: 10px;
 }
 
-.back-arrow {
+.current-booking-container .back-arrow {
   position: relative;
+  margin: 0;
   margin-bottom: 10px;
   cursor: pointer;
 }
