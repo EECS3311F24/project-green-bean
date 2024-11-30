@@ -20,3 +20,20 @@ export const postBooking = async (bookingData) => {
     throw new Error(error.message);
   }
 };
+
+export const checkAvailability = async (bookingData) => {
+  const response = await fetch(`${API_URL}/bookings/check`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(bookingData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to check availability");
+  }
+
+  const data = await response.json();
+  return data.available;
+};

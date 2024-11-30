@@ -2,7 +2,7 @@ const API_URL = "http://localhost:3000/api";
 
 const fetchArenas = async () => {
   try {
-    const response = await fetch(`${API_URL}/arenas/available`); // fetch only the available arenas and not the booked ones
+    const response = await fetch(`${API_URL}/arenas/`); // fetch only the available arenas and not the booked ones
     if (!response.ok) {
       throw new Error("Failed to fetch arenas");
     }
