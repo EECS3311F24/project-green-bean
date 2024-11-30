@@ -162,6 +162,7 @@ router.post("/", async (req, res) => {
       image,
       rate,
       rating,
+      minAge,
       isBooked = {},
     } = req.body;
 
@@ -183,6 +184,7 @@ router.post("/", async (req, res) => {
       image: image || "",
       rate: rate || 0,
       rating: rating || 0,
+      minAge: minAge || null,
       isBooked,
     });
 
