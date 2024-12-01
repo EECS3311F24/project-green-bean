@@ -12,6 +12,9 @@ import GoogleAuthCallback from "./containers/GoogleAuthCallback";
 import ConfirmedBookingPage from "./containers/ConfirmedBookingPage";
 import Arenas from "./containers/Arenas";
 import TextCommentpage from "./containers/TextComment";
+import TestMakeEventPage from "./containers/testMakeEvent";
+import TestGetEventsPage from "./containers/testGetEvents";
+import TestSingleEventPage from "./containers/testSingleEvent";
 import { useAuth } from "./state/AuthContext";
 import CurrentBooking from "./containers/CurrentBooking";
 
@@ -57,6 +60,17 @@ function App() {
         <Route
           path="/booking/:id"
           element={<BookingPage userName={userData?.name || userName} />}
+        />
+         <Route
+          path="/testEvent/:id"
+          element={<TestMakeEventPage userName={userData?.name || userName} />}
+        />
+        <Route
+        path="/testEvents"
+        element={<TestGetEventsPage />}
+        /><Route
+        path="/testSingleEvent/:id"
+        element={<TestSingleEventPage />}
         />
         <Route path="/current-booking" element={<CurrentBooking />} />
         <Route path="/confirmed" element={<ConfirmedBookingPage />} />

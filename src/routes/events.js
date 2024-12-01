@@ -48,8 +48,36 @@ router.post("/testing", upload.single("image"), async (req, res, ) =>{
       .status(500)
       .json({ message: "Failed to create booking", error: error.message });
   }
+});
 
-    
+router.get("/testing", async (req, res) => {
+  try {
+    const eventsRef = collection(fireStoredb, "testing");
+    const snapshot = await getDocs(eventsRef);
+    const events = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    res.status(200).json(events);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch events", error: error.message });
+  }
+});
+
+
+router.get("/testing/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const eventItem= doc(fireStoredb, "testing", id);
+    const snapshot = await getDoc(eventItem);
+    if (snapshot.empty) {
+      return res.status(404).json({ message: "No event is found" });
+    }
+    res.status(200).json({ id: snapshot.id, ...snapshot.data() });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch arenas", error: error.message });
+  }
 
 });
 
@@ -58,6 +86,7 @@ router.get("/", async (req, res) => {
     const eventsRef = collection(fireStoredb, "events");
     const snapshot = await getDocs(eventsRef);
     const events = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    console.log(events)
     res.status(200).json(events);
   } catch (error) {
     res
