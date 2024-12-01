@@ -22,6 +22,12 @@ const Header = ({ userName, setUserName, setEmail }) => {
     setIsDropdownOpen(false);  
   };
 
+  // Function to handle the events page click on dropdown
+  const handleEvents = () => {
+    navigate("/events");
+    setIsDropdownOpen(false);
+  }
+
   // Toggle the dropdown visibility
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -39,6 +45,9 @@ const Header = ({ userName, setUserName, setEmail }) => {
           <div className="dropdown-menu">
             <div onClick={handleCurrentBooking} className="dropdown-item">
               Current Booking
+            </div>
+            <div onClick={handleEvents} className="dropdown-item">
+              Events
             </div>
             <div onClick={handleLogout} className="dropdown-item">
               Log Out
