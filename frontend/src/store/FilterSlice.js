@@ -6,8 +6,9 @@ const initialState = {
         location: '',
         address: '',
         type: '',
-        rate: [],
-        rating: ''
+        rate: [0, 150],
+        rating: '',
+        minAge: ''
     },
     applied: false,
     initialdata:[]
@@ -26,8 +27,9 @@ export const filterSlice = createSlice({
                 location: '',
                 address: '',
                 type: '',
-                rate: [],
-                rating: ''
+                rate: [0, 150],
+                rating: '',
+                minAge: ''
             }
             state.applied = false
         },
