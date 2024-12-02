@@ -32,6 +32,7 @@ import FilteringComponent from './Filters';
 import { useDispatch, useSelector } from 'react-redux';
 import { setInitialdata } from '../store/FilterSlice';
 import { useNavigate } from 'react-router-dom';
+import "./_styling/arenas.css";
 
 
 const Arenas = () => {
@@ -643,8 +644,8 @@ useEffect(() => {
             <Card sx={{ position: 'relative' }}>
                 {arena.image && (
                     <CardMedia
+                    className='image'
                         component="img"
-                        height="240"
                         image={arena.image}
                         alt={arena.name}
                     />
