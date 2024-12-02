@@ -401,15 +401,7 @@ useEffect(() => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setIsModalOpen(true)}
-                style={{ marginBottom: '20px' }}
-            >
-                Create New Event
-            </Button>
-
+            
 
             <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <DialogTitle>Create New Event</DialogTitle>
@@ -720,13 +712,6 @@ useEffect(() => {
                             Contact
                         </Button>
 
-                        <Button
-                            variant="outlined"
-                            color="secondary"
-                            onClick={() => handleTestEvent(arena)}
-                        >
-                            Test
-                        </Button>
 
                         
                     </Box>

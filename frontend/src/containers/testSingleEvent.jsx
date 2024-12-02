@@ -18,32 +18,41 @@ const TestGetSingleEvent = () => {
     const{description,
         image,
         name,
-        id,
+        email,
+        phone,
+        arenaName,
         arenaId} = state;
 
 
-
-   
-
-   
 
     return (
         <>
             <ArrowBackIcon className='back-arrow' onClick={() => navigate("/arenas")} />
             <Box
                 sx={{
-                    width: "50%",
+                    width: "80%",
                     margin: "0 auto",
                     padding: "20px",
                     "@media (max-width:600px)": { width: "90%" },
                 }}
             >
                <Card sx={{ mb: 2 }}>
-                            <CardMedia component="img" height="240" image={image} />
+                            <CardMedia component="img" height="400" image={image} />
                             <CardContent>
-                                <Typography>{arenaId}</Typography>
+                                <Typography variant="h4">{name}</Typography>
                             </CardContent>
-                        </Card>
+                            <CardContent>
+                                <Typography>{description}</Typography>
+                            </CardContent>
+                            <CardContent>
+                                <Typography>Location: {arenaName}</Typography>
+                            </CardContent>
+                            <CardContent>
+                                <Typography variant="h5">Contact:</Typography>
+                                <Typography >{phone}</Typography>
+                                <Typography >{email}</Typography>
+                            </CardContent>
+                </Card>
 
             </Box>
         </>

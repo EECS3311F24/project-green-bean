@@ -72,7 +72,7 @@ const MakeEvents = ({ userName }) => {
 
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
-    
+
         // Handle payment fields (nested inside paymentInfo)
         if (name.startsWith("paymentInfo.")) {
             const paymentField = name.split(".")[1];
@@ -100,7 +100,7 @@ const MakeEvents = ({ userName }) => {
                 // Handle other inputs (checkboxes, text fields)
                 setFormData((prev) => ({
                     ...prev,
-                    [name]: type === "checkbox" 
+                    [name]: type === "checkbox"
                         ? checked // For checkboxes, use the 'checked' property
                         : value,  // For text inputs, use the 'value' property
                 }));
@@ -196,15 +196,22 @@ const MakeEvents = ({ userName }) => {
                             fullWidth
                             margin="normal"
                         />
-                        <TextField
+                         <Typography variant="h6">Event Description</Typography>
+                        <textarea
                             label="Description"
+                            id="eventDescription"
                             name="eventDescription"
-                            value={formData.description}
+                            value={formData.eventDescription}
                             onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            multiline
                             rows={4}
+                            style={{
+                                width: '100%',
+                                padding: '8px',
+                                fontSize: '16px',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                resize: 'vertical'
+                            }}
                         />
                         <Typography variant="body2" color="textSecondary" gutterBottom>
                             Cover Image
@@ -212,7 +219,7 @@ const MakeEvents = ({ userName }) => {
                         <input
                             type="file"
                             accept="image/*"
-                            name="image"// Matches the backend field
+                            name="eventImage"// Matches the backend field
                             onChange={handleChange}
                             style={{ marginTop: '10px', display: 'block' }}
                         />

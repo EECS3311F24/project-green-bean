@@ -71,7 +71,7 @@ function App() {
         path="/testEvents"
         element={<TestGetEventsPage />}
         /><Route
-        path="/testSingleEvent/:id"
+        path="/singleEvent/:id"
         element={<TestSingleEventPage />}
         />
         <Route path="/current-booking" element={<CurrentBooking />} />

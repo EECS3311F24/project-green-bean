@@ -114,7 +114,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //make a new event
-router.post("/booking", upload.single("image"), async(req, res, ) =>{
+router.post("/booking", upload.single("eventImage"), async(req, res, ) =>{
   try {
     const {
         firstName,
