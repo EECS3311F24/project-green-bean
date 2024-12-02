@@ -354,6 +354,27 @@ useEffect(() => {
         });
     };
 
+    const handleEvent = (arena) => {
+        navigate(`/makeEvent/${arena.id}`, {
+            state: {
+                description: arena.description,
+                image: arena.image,
+                name: arena.name,
+                id: arena.id,
+            }
+        });
+    };
+    const handleTestEvent = (arena) => {
+        navigate(`/testEvent/${arena.id}`, {
+            state: {
+                description: arena.description,
+                image: arena.image,
+                name: arena.name,
+                id: arena.id,
+            }
+        });
+    };
+
     const handleContact = (arena) => {
         setContactDetails({
             contactEmail: arena.contactEmail,
@@ -685,12 +706,29 @@ useEffect(() => {
                             Book
                         </Button>
                         <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleEvent(arena)}
+                        >
+                            Create Event
+                        </Button>
+                        <Button
                             variant="outlined"
                             color="secondary"
                             onClick={() => handleContact(arena)}
                         >
                             Contact
                         </Button>
+
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            onClick={() => handleTestEvent(arena)}
+                        >
+                            Test
+                        </Button>
+
+                        
                     </Box>
                 </CardContent>
             </Card>

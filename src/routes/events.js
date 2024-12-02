@@ -130,6 +130,7 @@ router.post("/booking", upload.single("image"), async(req, res, ) =>{
         isRepeat,
         paymentInfo,
         arenaId,
+        arenaName
     } = req.body;
 
     // Validate required fields
@@ -143,7 +144,8 @@ router.post("/booking", upload.single("image"), async(req, res, ) =>{
         !email ||
         !date ||
         !time ||
-        !arenaId
+        !arenaId||
+        !arenaName
       ) {
         return res
           .status(400)
@@ -169,16 +171,7 @@ router.post("/booking", upload.single("image"), async(req, res, ) =>{
     const arenaRef = doc(fireStoredb, "arenas", arenaId);
     const arenaSnap = await getDoc(arenaRef);
 
-     // Check if the arena exists and is available
-     if (
-      !arenaSnap.exists() ||
-      (arenaSnap.data().isBooked &&
-        Object.keys(arenaSnap.data().isBooked).length > 0)
-    ) {
-      return res
-        .status(400)
-        .json({ message: "The specified arena is not available right now" });
-    }
+    
 
     // Create a new booking in Firestore
     const newBookingRef = doc(collection(fireStoredb, "events"));
@@ -197,6 +190,7 @@ router.post("/booking", upload.single("image"), async(req, res, ) =>{
       isRepeat: isRepeat || null,
       paymentInfo: paymentInfo || {},
       arenaId: arenaId,
+      arenaName: arenaName
     });
 
     // Update the arena with user booking information
