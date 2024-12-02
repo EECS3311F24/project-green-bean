@@ -1,37 +1,42 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { useDispatch, useSelector } from 'react-redux'
-import { clearFilterstate, handleApplied, handleFilterState } from '../store/FilterSlice'
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  clearFilterstate,
+  //handleApplied,
+  handleFilterState,
+} from "../store/FilterSlice";
 
 export default function FilteringComponent() {
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const dispatch = useDispatch()
-  const filters = useSelector((state) => state.filter.data)
+  const dispatch = useDispatch();
+  const filters = useSelector((state) => state.filter.data);
 
   const handleFilterChange = (field, value) => {
-    // setFilters(prev => ({ ...prev, [field]: value }))
-    dispatch(handleFilterState({
-      ...filters, 
-      [field]: value,
-    }))
-  }
+    dispatch(
+      handleFilterState({
+        ...filters,
+        [field]: value,
+      })
+    );
+  };
 
   const toggleFilter = () => {
-    setIsFilterOpen(!isFilterOpen)
-  }
-
-  const submitFilter = () => {
-    dispatch(handleApplied())
-    setIsFilterOpen(!isFilterOpen)
-  }
-
+    setIsFilterOpen(!isFilterOpen);
+  };
+  
+  //const submitFilter = () => {
+  //  dispatch(handleApplied());
+  //  setIsFilterOpen(!isFilterOpen);
+  //  dispatch(handleFilterState(filters));
+  //};
 
   const clearFilter = () => {
-    dispatch(clearFilterstate())
-  }
+    dispatch(clearFilterstate());
+  };
 
   return (
     <div className="relative p-4">
@@ -42,9 +47,7 @@ export default function FilteringComponent() {
         animate={{ rotate: isFilterOpen ? 45 : 0 }}
         transition={{ duration: 0.3 }}
       >
-        <span className="text-xl font-bold">
-          {isFilterOpen ? '✕' : '🔍'}
-        </span>
+        <span className="text-xl font-bold">{isFilterOpen ? "✕" : "🔍"}</span>
       </motion.button>
 
       {/* Filter Component */}
@@ -54,24 +57,39 @@ export default function FilteringComponent() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -50 }}
           transition={{ type: "spring", stiffness: 100 }}
-          className="absolute z-50 top-12 left-0 right-0 bg-white p-6 shadow-lg rounded-lg space-y-4"
+          className="absolute z-50 top-12 left-0 right-0 
+            bg-white 
+            p-6 
+            shadow-lg 
+            rounded-lg 
+            space-y-6 
+            w-full 
+            max-w-xs 
+            max-h-[500px] 
+            overflow-y-auto"
         >
-          <div>
+          {/* Sticky Clear Filter Button */}
+          <div className="sticky top-0 bg-white z-10 mb-4">
             <button
               onClick={clearFilter}
-              className="mt-4 w-full bg-orange-400 text-white py-2 rounded-md hover:bg-orange-700"
+              className="w-full bg-orange-400 text-white py-2 rounded-md hover:bg-orange-700"
             >
-              clear filter
+              Clear Filter
             </button>
           </div>
 
-      {/* Location type Filter */}
+          {/* Location type Filter */}
           <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-800">Location</label>
+            <label
+              htmlFor="location"
+              className="block text-sm font-medium text-gray-800"
+            >
+              Location
+            </label>
             <select
               id="location"
               value={filters.location}
-              onChange={(e) => handleFilterChange('sport', e.target.value)}
+              onChange={(e) => handleFilterChange("location", e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             >
               <option value="">Any</option>
@@ -83,20 +101,27 @@ export default function FilteringComponent() {
 
           {/* Address Filter */}
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
+            <label
+              htmlFor="address"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Address
+            </label>
             <input
               id="address"
               type="text"
-              placeholder="Enter address"
+              placeholder="Enter Location Address"
               value={filters.address}
-              onChange={(e) => handleFilterChange('address', e.target.value)}
+              onChange={(e) => handleFilterChange("address", e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             />
           </div>
 
           {/* Type Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Type</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Type
+            </label>
             <div className="flex space-x-4 mt-1">
               <label className="inline-flex items-center my-2">
                 <input
@@ -136,14 +161,18 @@ export default function FilteringComponent() {
 
           {/* Price Range Slider */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Price Range</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Price Range
+            </label>
             <input
               type="range"
               min="0"
               max="150"
               step="1"
               value={filters.rate[1]}
-              onChange={(e) => handleFilterChange('rate', [0, parseInt(e.target.value)])}
+              onChange={(e) =>
+                handleFilterChange("rate", [0, parseInt(e.target.value)])
+              }
               className="mt-1 w-full"
             />
             <div className="flex justify-between text-sm text-gray-500 mt-1">
@@ -154,40 +183,69 @@ export default function FilteringComponent() {
 
           {/* Sports type Filter */}
           <div>
-            <label htmlFor="sport" className="block text-sm font-medium text-gray-800">Sports Type</label>
-          <select
-            id="sport"
-            value={filters.sport || ""} // Use the correct filter key
-            onChange={(e) => handleFilterChange('sport', e.target.value)} // Change 'rating' to 'sport'
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-          >
-          <option value="">Any</option>
-          <option value="basketball">Basketball</option>
-          <option value="tennis">Tennis</option>
-          <option value="badminton">Badminton</option>
-        </select>
-      </div>
-
+            <label
+              htmlFor="sport"
+              className="block text-sm font-medium text-gray-800"
+            >
+              Sports Type
+            </label>
+            <select
+              id="sport"
+              value={filters.sport || ""}
+              onChange={(e) => handleFilterChange("sport", e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            >
+              <option value="">Any</option>
+              <option value="basketball">Basketball</option>
+              <option value="tennis">Tennis</option>
+              <option value="badminton">Badminton</option>
+            </select>
+          </div>
 
           {/* Ratings Filter */}
           <div>
-            <label htmlFor="rating" className="block text-sm font-medium text-gray-700">Rating</label>
+            <label
+              htmlFor="rating"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Rating
+            </label>
             <select
               id="rating"
               value={filters.rating}
-              onChange={(e) => handleFilterChange('rating', e.target.value)}
+              onChange={(e) => handleFilterChange("rating", e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-  >
+            >
               <option value="">Any</option>
               <option value="3.0">3.0+</option>
               <option value="3.1">3.1+</option>
               <option value="4.8">4.8+</option>
               <option value="4.9">4.9+</option>
-              </select>
-            </div>
+            </select>
+          </div>
 
-
-          {/*Apply Filters Button
+          {/* Age Filter */}
+          <div>
+            <label
+              htmlFor="rating"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Minimum Age Required
+            </label>
+            <select
+              id="minAge"
+              value={filters.minAges}
+              onChange={(e) => handleFilterChange("minAge", e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            >
+              <option value="">Any</option>
+              <option value="15">15+</option>
+              <option value="18">18+</option>
+              <option value="21">21+</option>
+            </select>
+          </div>
+          
+          {/* Apply Filters Button 
           <button
             onClick={submitFilter}
             className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700"
@@ -196,5 +254,5 @@ export default function FilteringComponent() {
         </motion.div>
       )}
     </div>
-  )
+  );
 }

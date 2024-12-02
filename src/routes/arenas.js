@@ -163,7 +163,10 @@ router.post("/", async (req, res) => {
       rate,
       rating,
       minAge,
+      contactPhone,
+      contactEmail,
       isBooked = {},
+      accessible = true,
     } = req.body;
 
     if (!name || !location || !address || isPublic === undefined) {
@@ -185,7 +188,10 @@ router.post("/", async (req, res) => {
       rate: rate || 0,
       rating: rating || 0,
       minAge: minAge || null,
+      contactPhone: contactPhone || null,
+      contactEmail: contactEmail || null, 
       isBooked,
+      accessible,
     });
 
     res
