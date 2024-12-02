@@ -39,3 +39,16 @@ export const postTestEvent = async (testData) =>{
         throw new Error(error.message);
     }
 };
+
+export const postEvent = async (eventData) =>{
+  try {
+      const response = await axios.post(`${API_URL}/events/booking`, eventData,{
+          headers: {
+              "Content-Type": "multipart/form-data",
+          },
+      }); // Send feedback data to the URL for POST
+      return response.data; // Axios automatically parses JSON response
+  } catch (error) {
+      throw new Error(error.message);
+  }
+};

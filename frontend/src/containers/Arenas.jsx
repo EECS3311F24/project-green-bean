@@ -354,6 +354,27 @@ useEffect(() => {
         });
     };
 
+    const handleEvent = (arena) => {
+        navigate(`/makeEvent/${arena.id}`, {
+            state: {
+                description: arena.description,
+                image: arena.image,
+                name: arena.name,
+                id: arena.id,
+            }
+        });
+    };
+    const handleTestEvent = (arena) => {
+        navigate(`/testEvent/${arena.id}`, {
+            state: {
+                description: arena.description,
+                image: arena.image,
+                name: arena.name,
+                id: arena.id,
+            }
+        });
+    };
+
     const handleContact = (arena) => {
         setContactDetails({
             contactEmail: arena.contactEmail,
@@ -380,15 +401,7 @@ useEffect(() => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setIsModalOpen(true)}
-                style={{ marginBottom: '20px' }}
-            >
-                Create New Event
-            </Button>
-
+            
 
             <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <DialogTitle>Create New Event</DialogTitle>
@@ -685,12 +698,22 @@ useEffect(() => {
                             Book
                         </Button>
                         <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleEvent(arena)}
+                        >
+                            Create Event
+                        </Button>
+                        <Button
                             variant="outlined"
                             color="secondary"
                             onClick={() => handleContact(arena)}
                         >
                             Contact
                         </Button>
+
+
+                        
                     </Box>
                 </CardContent>
             </Card>
