@@ -301,6 +301,18 @@ useEffect(() => {
             }
         }); // Pass arena details to BookingPage
     };
+
+    const handleTestMakeEvent = (arena) => {
+        console.log(arena);
+        navigate(`/testEvent/${arena.id}`, {
+            state: {
+                description: arena.description,
+                image: arena.image,
+                name: arena.name,
+                id: arena.id
+            }
+        }); // Pass arena details to Test Event Page
+    };
     return (
         <div style={{ padding: '20px' }}>
             <Button
@@ -602,7 +614,14 @@ useEffect(() => {
                                 >
                                     Book
                                 </Button>
-
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    style={{ marginTop: '10px' , zIndex:'5px'}}
+                                    onClick={() => handleTestMakeEvent(arena)}
+                                >
+                                    Create Event
+                                </Button>
                             </CardContent>
                         </Card>
                     </Grid>
