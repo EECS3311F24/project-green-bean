@@ -17,6 +17,7 @@ import TestGetEventsPage from "./containers/testGetEvents";
 import TestSingleEventPage from "./containers/testSingleEvent";
 import { useAuth } from "./state/AuthContext";
 import CurrentBooking from "./containers/CurrentBooking";
+import Events from "./containers/Events";
 
 function App() {
   const { userData } = useAuth();
@@ -74,6 +75,7 @@ function App() {
         />
         <Route path="/current-booking" element={<CurrentBooking />} />
         <Route path="/confirmed" element={<ConfirmedBookingPage />} />
+        <Route path="/events" element={<Events />} />
         <Route path="*" element={<Navigate to="/" />} />{" "}
       </Routes>
     </Router>

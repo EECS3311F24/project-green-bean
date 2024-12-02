@@ -21,6 +21,12 @@ import {
     Fade,
     Backdrop,
     IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Checkbox,
+    FormControlLabel
 } from '@mui/material';
 import FilteringComponent from './Filters';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,13 +45,37 @@ const Arenas = () => {
     const [contactDetails, setContactDetails] = useState({});
     const [emailStatus, setEmailStatus] = useState(null);
     const [emailError, setEmailError] = useState(null);
-    const [formData, setFormData] = useState({
+    const [emailData, setEmailData] = useState({
         name: '',
         email: '',
         message: '',
     });
     const [accessibilityDetails, setAccessibilityDetails] = useState("");
-    const { isAuthenticated } = useAuth();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        email: '',
+        eventTitle: '',
+        description: '',
+        image: null,
+        date: '',
+        timeFrom: '',
+        timeTo: '',
+        isRepeat: false,
+        maxAge: '',
+        minAge: '',
+        paymentDetails: {
+            creditCard: '',
+        cvv: '',
+        cardName: '',
+        expiryDate: '',
+        },
+        termsAccepted: false
+    });
+
+    const { isAuthenticated, userData } = useAuth();
     const dispatch = useDispatch();
     const filters = useSelector((state) => state.filter?.data);
     const initialdata = useSelector((state) => state.filter?.initialdata);
@@ -66,16 +96,16 @@ const Arenas = () => {
                 'template_q0pl60c',    // EmailJS template ID
                 {
                     to_email: contactDetails.contactEmail || 'prjgreenbean@gmail.com',
-                    from_name: formData.name,
-                    from_email: formData.email,
-                    message: formData.message,
+                    from_name: emailData.name,
+                    from_email: emailData.email,
+                    message: emailData.message,
                     arena_name: contactDetails.arenaName,
                 },
                 'I7RSpVkqUoYWttLOg'      // Replace with your EmailJS public key
             );
             setEmailStatus('Email sent successfully!');
             // Reset form after successful send
-            setFormData({
+            setEmailData({
                 name: '',
                 email: '',
                 message: '',
@@ -86,9 +116,9 @@ const Arenas = () => {
         }
     };
      // Handler for form input changes
-     const handleInputChange = (e) => {
+     const handleEmailInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({
+        setEmailData(prevState => ({
             ...prevState,
             [name]: value
         }));
@@ -238,6 +268,81 @@ useEffect(() => {
     if (loading) return <CircularProgress />;
     if (error) return <Alert severity="error">Error fetching arenas: {error}</Alert>;
 
+
+    const handleInputChange = (field, value) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            [field]: value,
+        }));
+    };
+
+    const handleNestedInputChange = (field, nestedField, value) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            [field]: {
+                ...prevData[field],
+                [nestedField]: value,
+            },
+        }));
+    };
+
+    const handleFileChange = (e) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            coverImage: e.target.files[0],
+        }));
+    };
+
+    const handleChange = (e) => {
+        const { name, checked } = e.target; 
+        setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: checked, // Update the repeat field in the formData state
+    }));
+    }
+    const handleCreateEvent = () => {
+        if (!formData.firstName.trim() ||
+            !formData.lastName.trim() ||
+            !formData.phone.trim() ||
+            !formData.email.trim() ||
+            !formData.eventTitle.trim() ||
+            !formData.description.trim() ||
+            !formData.coverImage ||
+            !formData.timeFrom.trim() ||
+            !formData.timeTo.trim() ||
+            !formData.minAge.trim() ||
+            !formData.maxAge.trim() ||
+            !formData.termsAccepted
+        ) {
+            alert('Please fill out all fields and accept the terms and conditions.');
+            return;
+        }
+
+        setIsModalOpen(false);
+        setFormData({
+            firstName: '',
+            lastName: '',
+            phone: '',
+            email: '',
+            eventTitle: '',
+            description: '',
+            coverImage: null,
+            date: '',
+            timeFrom: '',
+            timeTo: '',
+            isRepeat: false,
+            minAge: '',
+            maxAge: '',
+            paymentDetails: {
+                cardNumber: '',
+                cvv: '',
+                name: '',
+                expiryDate: '',
+            },
+            termsAccepted: false,
+        });
+    };
+
     const handleBook = (arena) => {
         navigate(`/booking/${arena.id}`, {
             state: {
@@ -275,6 +380,213 @@ useEffect(() => {
 
     return (
         <div style={{ padding: '20px' }}>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setIsModalOpen(true)}
+                style={{ marginBottom: '20px' }}
+            >
+                Create New Event
+            </Button>
+
+
+            <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <DialogTitle>Create New Event</DialogTitle>
+                <DialogContent>
+                    {/* Contact Section */}
+                    <Typography variant="h6">Contact</Typography>
+                    <TextField
+                        label="First Name"
+                        value={formData.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Last Name"
+                        value={formData.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Phone Number"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+
+                    <Typography variant="h6">Event</Typography>
+                    <TextField
+                        label="Event Title"
+                        value={formData.eventTitle}
+                        onChange={(e) => handleInputChange('eventTitle', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Description"
+                        value={formData.description}
+                        onChange={(e) => handleInputChange('description', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        multiline
+                        rows={4}
+                    />
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                        Cover Image
+                    </Typography>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        style={{ marginTop: '10px', display: 'block' }}
+                    />
+                    <TextField
+                        label="Minimum Age"
+                        value={formData.minAge}
+                        onChange={(e) => handleInputChange('minAge', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Maximum Age"
+                        value={formData.maxAge}
+                        onChange={(e) => handleInputChange('maxAge', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+
+                    {/* Duration Section */}
+                    <Typography variant="h6">Duration</Typography>
+                    <TextField
+                        label="Select Date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => handleInputChange('date', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                    <TextField
+                        label="Time From"
+                        type="time"
+                        value={formData.timeFrom}
+                        onChange={(e) => handleInputChange('timeFrom', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        InputLabelProps={{
+                        shrink: true,
+                        }}
+                    />
+                    <TextField
+                        label="Time To"
+                        type="time"
+                        value={formData.timeTo}
+                        onChange={(e) => handleInputChange('timeTo', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        InputLabelProps={{
+                        shrink: true,
+                        }}
+                    />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
+                    <FormControlLabel
+                    control={<Checkbox name="isRepeat" checked={formData.isRepeat} onChange={handleChange} />}
+                    label="Repeat Booking"
+                    />
+                    </div>
+                        <Typography variant="h6">Payment</Typography>
+                    <TextField
+                        label="Credit Card Number"
+                        value={formData.paymentDetails.cardNumber}
+                        onChange={(e) =>
+                            handleNestedInputChange('paymentDetails', 'cardNumber', e.target.value)
+                        }
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="CVV"
+                        value={formData.paymentDetails.cvv}
+                        onChange={(e) =>
+                            handleNestedInputChange('paymentDetails', 'cvv', e.target.value)
+                        }
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Name on Card"
+                        value={formData.paymentDetails.name}
+                        onChange={(e) =>
+                            handleNestedInputChange('paymentDetails', 'name', e.target.value)
+                        }
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Expiry Date (MM/YY)"
+                        value={formData.paymentDetails.expiryDate}
+                        onChange={(e) =>
+                            handleNestedInputChange('paymentDetails', 'expiryDate', e.target.value)
+                        }
+                        fullWidth
+                        margin="normal"
+                    />
+
+                    <Typography variant="body2" color="textSecondary" style={{ marginTop: '20px' }}>
+                        By creating this event, you agree to the following terms and conditions:
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                        1. The event organizer is responsible for ensuring compliance with all local laws and regulations.
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                        2. The organizer agrees to provide accurate and truthful information when creating the event.
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                        3. Any misuse of this platform, including fraudulent events, will result in immediate account suspension.
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                        4. The platform reserves the right to remove any event that violates these terms without prior notice.
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                        5. Additional terms may apply depending on the nature of the event.
+                    </Typography>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={formData.termsAccepted}
+                                onChange={(e) =>
+                                    handleInputChange('termsAccepted', e.target.checked)
+                                }
+                            />
+                        }
+                        label="I have read all Terms and Conditions"
+                    />
+                </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={() => setIsModalOpen(false)} color="secondary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleCreateEvent} color="primary">
+                        Submit
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             <Box display="flex" alignItems="center" gap={2}>
                 <Typography variant="h4" component="h1" gutterBottom>
                     Arenas
@@ -488,8 +800,8 @@ useEffect(() => {
                         fullWidth
                         label="Your Name"
                         name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
+                        value={emailData.name}
+                        onChange={handleEmailInputChange}
                         required
                         sx={{ mb: 2 }}
                     />
@@ -498,8 +810,8 @@ useEffect(() => {
                         label="Your Email"
                         name="email"
                         type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
+                        value={emailData.email}
+                        onChange={handleEmailInputChange}
                         required
                         sx={{ mb: 2 }}
                     />
@@ -509,8 +821,8 @@ useEffect(() => {
                         name="message"
                         multiline
                         rows={4}
-                        value={formData.message}
-                        onChange={handleInputChange}
+                        value={emailData.message}
+                        onChange={handleEmailInputChange}
                         required
                         sx={{ mb: 2 }}
                     />

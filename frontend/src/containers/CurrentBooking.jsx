@@ -181,7 +181,7 @@ const CurrentBooking = () => {
             .map((booking) => (
               <div className="booking-item" key={booking.id}>
                 <div className="booking-details">
-                  <p><strong>Arena ID:</strong> {booking.arenaId}</p>
+                <p><strong>Arena Name:</strong> {booking.arenaName}</p>
                   <p><strong>Date:</strong> {booking.date}</p>
                   <p><strong>Time:</strong> {booking.time}</p>
                   <p><strong>Email:</strong> {booking.email}</p>
