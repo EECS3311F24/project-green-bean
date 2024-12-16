@@ -159,7 +159,7 @@
 
     Your Mark: 2
 
-Tracking on Trello Total Mark: 24 / 24
+Tracking on Trello Total Mark: 23 / 24
 
 ---
 ## Sprint Completion (Max 20 marks) 
@@ -238,4 +238,4 @@ Tracking on Trello Total Mark: 24 / 24
   ---
 ## Total Mark
 
-109 / 109
+108 / 109
