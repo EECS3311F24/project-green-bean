@@ -1,0 +1,81 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  justify-content: space-between;
+  background-color: #4caf50;
+  color: white;
+}
+
+.project-name {
+  font-size: 24px;
+}
+
+.user-name {
+  font-size: 18px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.logout-btn {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  background-color: #d32f2f;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.project-name {
+  font-size: 24px;
+}
+
+.user-name {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-name-text {
+  display: flex;
+  align-items: center;
+}
+
+.user-name-text span {
+  margin-left: 8px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background-color: #fff;
+  color: #333;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  z-index: 10;
+}
+
+.dropdown-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f4f4f4;
+}
